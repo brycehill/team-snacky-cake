@@ -1,3 +1,14 @@
+TandemApplication.reopen({
+	ApplicationView: TandemApplication.BaseView.extend({
+		templateName: 'application'
+	})
+});
+
+
+
+
+
+
 var SocketIO = {
 
 	init: function() {
