@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 var Author = new Schema({
     name: String,
     books: [{
-        _id: ObjectId,
+        _id: Number,
         owner: Boolean
     }]
 });

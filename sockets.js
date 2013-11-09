@@ -3,6 +3,7 @@ var Book = require('./models/Book'),
     fs = require('fs');
 
 module.exports.init = function(io, socket) {
+
     console.log('Init Sockets');
 
     // Add a book (repo)
@@ -12,6 +13,8 @@ module.exports.init = function(io, socket) {
 
         title = data.title.replace( /\s/g, '')
                     .replace( /\W/g, '' );
+
+        // check if path exists.
 
         if (!user) user = 'bryce';
 
@@ -27,7 +30,7 @@ module.exports.init = function(io, socket) {
                 git.init(path, function (err, repo) {
                     if (err) throw err;
 
-                    // Create an intro file and make initial commit. 
+                    // Create an intro file and make initial commit.
                     fs.writeFile(firstFile, 'This is an intro file. Start writing!', function(err) {
                         if (err) throw err;
 
@@ -54,7 +57,7 @@ module.exports.init = function(io, socket) {
         });
     });
 
-    // Gets a book (repo) and sends it back. 
+    // Gets a book (repo) and sends it back.
     socket.on('getBook', function(data) {
         var path = data.path,
             repo;
@@ -63,12 +66,12 @@ module.exports.init = function(io, socket) {
         Book.find({ path: path }, function(err, book) {
             if (err) throw err;
 
-            socket.book = book; 
+            socket.book = book;
             socket.emit('viewBook', book);
         });
     });
 
-    // Save a book - Commit! 
+    // Save a book - Commit!
     socket.on('saveBook', function(data) {
         var message = data.message,
             repo;
@@ -76,10 +79,10 @@ module.exports.init = function(io, socket) {
         repo = git(socket.book.path);
 
         repo.commit(message, function(err) {
-            if (err) throw err; 
+            if (err) throw err;
 
             socket.emit('bookSaved', true)
         });
 
-    })
+    });
 };

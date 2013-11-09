@@ -7,7 +7,10 @@ var connect = require('connect'),
     socketio = require('socket.io'),
     mongoose = require('mongoose'),
     passport = require('passport'),
-    GitHubStrategy = require('passport-github').Strategy;
+    GitHubStrategy = require('passport-github').Strategy,
+    parseCookie = require('connect').utils.parseCookie,
+    MemoryStore = express.session.MemoryStore,
+    sessionStore = new MemoryStore();
 
 
 passport.serializeUser(function(user, done) {
@@ -17,7 +20,6 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(obj, done) {
     done(null, obj);
 });
-
 
 passport.use(new GitHubStrategy({
         clientID: '32a5a6f2539e177a2d34',
@@ -29,14 +31,12 @@ passport.use(new GitHubStrategy({
     }
 ));
 
-
 mongoose.connect('mongodb://localhost/tandem');
 
 //Setup Express
 var isProduction = (process.env.NODE_ENV === 'production'),
     port = (isProduction ? 80 : 8000),
     server = express.createServer();
-
 
 server.configure(function () {
     server.set('views', __dirname + '/views');
@@ -46,14 +46,13 @@ server.configure(function () {
     server.use(connect['static'](__dirname + '/staticfiles'));
 
     server.use(express.methodOverride());
-    server.use(express.session({ secret: 'keyboard cat' }));
+    server.use(express.session({secret:'monkey man', store: sessionStore, key: 'express.sid'}));
 
     server.use(passport.initialize());
     server.use(passport.session());
 
     server.use(server.router);
 });
-
 
 //setup the errors
 server.error(function (err, req, res, next) {
@@ -83,8 +82,30 @@ server.error(function (err, req, res, next) {
 server.listen(port);
 io = socketio.listen(server);
 
+io.set('authorization', function (data, accept) {
+    if (data.headers.cookie) {
+        data.cookie = parseCookie(data.headers.cookie);
+        data.sessionID = data.cookie['express.sid'];
+        // (literally) get the session data from the session store
+        sessionStore.get(data.sessionID, function (err, session) {
+            if (err || !session) {
+                // if we cannot grab a session, turn down the connection
+                accept('Error', false);
+            } else {
+                // save the session data and accept the connection
+                data.session = session;
+                accept(null, true);
+            }
+        });
+    } else {
+       return accept('No cookie transmitted.', false);
+    }
+});
+
 io.sockets.on('connection', function(socket) {
     require('./sockets').init(io, socket);
+
+    console.log('A socket with sessionID ' + socket.handshake.sessionID + ' connected!');
 });
 
 server.get('/', function (req, res) {
@@ -98,27 +119,46 @@ server.get('/', function (req, res) {
     });
 });
 
-server.get('/app', function (req, res) {
-    res.render('app.jade', {
-        locals : {
-            title : 'Your Page Title',
-            description: 'Your Page Description',
-            author: 'Your Name',
-            analyticssiteid: 'XXXXXXX'
-        }
-    });
-});
+var Author = require('./models/author');
 
+server.get('/app', function (req, res) {
+    if (!req.session.passport.user) {
+        res.redirect('/login');
+    } else {
+        Author.findOne({name: req.user.username}, function (u) {
+            if (!u) {
+                var u = new Author({name: req.user.username});
+                u.save();
+            }
+
+            res.render('app.jade', {
+                locals : {
+                    title : 'Your Page Title',
+                    uid: u._id.toString(),
+                    description: 'Your Page Description',
+                    author: 'Your Name',
+                    analyticssiteid: 'XXXXXXX'
+                }
+            });
+        });
+    }
+});
 
 
 server.get('/login', passport.authenticate('github'));
 
 server.get('/callback', passport.authenticate('github', {
-    failureRedirect: '/monkey'
+    failureRedirect: '/login'
 }),
 function(req, res) {
     // Successful authentication, redirect home.
     res.redirect('/app');
+});
+
+server.get('/logout', function (req, res) {
+    req.logout();
+    delete req.session;
+    res.redirect('/');
 });
 
 
