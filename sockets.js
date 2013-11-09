@@ -1,33 +1,42 @@
 var Book = require('./models/Book'),
-    git = require('gift');
+    git = require('gift'),
+    fs = require('fs');
 
 module.exports.init = function(io, socket) {
-
-    
-
     console.log('Init Sockets');
 
     // Add a book (repo)
     socket.on('addBook', function(data) {
-        console.log('addBook');
-        console.log(data);
-        var path = data.path,
-            title = data.title;
+        var user = data.user,
+            title;
 
-        // check if path exists. 
+        title = data.title.replace( /\s/g, '')
+                    .replace( /\W/g, '' );
 
+        if (!user) user = 'bryce';
 
-        git.init(__dirname + '/' + path, function (err, repo) {
-            if (err) throw err;
+        path = '/repos/' + user + '/' + title;
 
-            // do stuff with repo
-            var book = new Book({
-                title: title,
-                path: path
-            });
+        fs.exists(path, function(exists) {
+            if (exists) {
+                throw new Error('Repo Exists for user ' + user);
+            }
 
-            book.save(function(err) {
+            fs.mkdir(path, function(err) {
                 if (err) throw err;
+
+                git.init(path, function (err, repo) {
+                    if (err) throw err;
+
+                    // do stuff with repo?
+                    var book = new Book({
+                        title: title
+                    });
+
+                    book.save(function(err) {
+                        if (err) throw err;
+                    });
+                });
             });
         });
     });
