@@ -4,7 +4,8 @@ require('nko')('QGxy2-Aqj_HFjEI2');
 //setup Dependencies
 var connect = require('connect'),
     express = require('express'),
-    io = require('socket.io'),
+    socketio = require('socket.io'),
+    port = (isProduction ? 80 : 8000),
     mongoose = require('mongoose');
 
 
@@ -51,11 +52,16 @@ server.error(function (err, req, res, next) {
 });
 
 server.listen(port);
+io = socketio.listen(port);
+
+io.sockets.on('connection', function(socket) {
+    require('./sockets').init(io, socket);
+});
 
 server.get('/', function (req, res) {
     res.render('index.jade', {
         locals : {
-            title : 'Your Page Title',
+            title : 'Tandem :: Co-Authoring Done Right',
             description: 'Your Page Description',
             author: 'Your Name',
             analyticssiteid: 'XXXXXXX'
@@ -90,6 +96,7 @@ function NotFound (msg) {
     Error.call(this, msg);
     Error.captureStackTrace(this, arguments.callee);
 }
+
 
 console.log('Listening on http://localhost:' + port);
 
