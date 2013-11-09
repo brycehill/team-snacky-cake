@@ -5,8 +5,8 @@ Index Page
 <button id="addBook" {{action 'createBook'}}>Create a new Book</button>
 
 Books
-<ul class="bookList">{{controller.books.content}}
-	{{#each book in controller.books}}
+<ul class="bookList">
+	{{#each book in controller.books.content}}
 	<li>{{book.title}}</li>
 	<li>{{book.author}}</li>
 	{{/each}}
