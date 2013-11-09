@@ -9,6 +9,7 @@ var connect = require('connect'),
     mongoose = require('mongoose');
 
 
+mongoose.connect('mongodb://localhost/tandem');
 
 //Setup Express
 var isProduction = (process.env.NODE_ENV === 'production'),
