@@ -125,7 +125,7 @@ var Author = require('./models/Author');
 
 server.get('/app', function (req, res) {
     if (!req.session.passport.user) {
-        res.redirect('/login');
+        res.redirect('/');
     } else {
         Author.findOne({username: req.user.username}, function (err, u) {
             if (err) throw err;
