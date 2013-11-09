@@ -111,13 +111,13 @@ module.exports = function (grunt) {
         grunt.task.run([
             'emberTemplates',
             'less',
-            'uglify.core',
+            'uglify:core',
             'watch'
         ]);
     });
     grunt.registerTask('vendor', function () {
         grunt.task.run([
-            'uglify.vendor'
+            'uglify:vendor'
         ]);
     });
 
