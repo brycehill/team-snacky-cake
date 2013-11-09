@@ -10,13 +10,24 @@ block content
 
     div.jumbotron
         div.container
-            h1 Ready to write? 
-            p 
-                | Take co-authoring to the next level with Tandem. Virtually collaborate on 
-                | your next masterpiece with authors around the world. Ready to get started?
-            p
-                a(href='/login').login Sign in with GitHub 
-                | and start creating your next book now!
+            div(class='col-lg-2 col-md-2')
+                div(class='hidden-sm hidden-xs')
+                    img(src='assets/img/logo_lg.gif')
+            div(class='col-lg-10 col-md-10 col-sm-12 col-xs-12')
+                div(class='col-sm-3 col-xs-12')
+                    div(class='visible-sm')
+                        img(src='assets/img/logo_md.gif')
+                    div(class='visible-xs')
+                        img(src='assets/img/logo_md.gif')
+                div(class='col-xs-12 col-sm-9 col-md-12 col-lg-12')
+                    h1 Ready to write? 
+                div(class="col-lg-12 col-md-12 col-sm-12 col-xs-12")
+                    p 
+                        | Take co-authoring to the next level with Tandem. Virtually collaborate on 
+                        | your next masterpiece with authors around the world. Ready to get started?
+                    p
+                        a(href='/login').login Sign in with GitHub 
+                        | and start creating your next book now!
 
     div.columns
         div.container
