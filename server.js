@@ -5,13 +5,13 @@ require('nko')('QGxy2-Aqj_HFjEI2');
 var connect = require('connect'),
     express = require('express'),
     io = require('socket.io'),
-    port = (isProduction ? 80 : 8000),
     mongoose = require('mongoose');
 
 
 
 //Setup Express
 var isProduction = (process.env.NODE_ENV === 'production'),
+    port = (isProduction ? 80 : 8000),
     server = express.createServer();
 
 
