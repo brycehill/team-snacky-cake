@@ -13,15 +13,15 @@ module.exports = function (grunt) {
                     'src/vendor/handlebars/handlebars.js',
                     'src/vendor/ember/ember.min.js'
                 ],
-                dest: 'staticfiles/assets/vendor.js'
+                dest: 'staticfiles/assets/js/vendor.js'
             },
             core: {
                 src: [
                     '.tmp/templates.js',
                     'src/application/*.js',
-                    'src/application/(controller,model,view)/*.js'
+                    'src/application/{controller,model,view}/*.js'
                 ],
-                dest: 'staticfiles/assets/core.js'
+                dest: 'staticfiles/assets/js/core.js'
             }
         },
         emberTemplates: {
@@ -41,7 +41,7 @@ module.exports = function (grunt) {
                     yuicompress: true
                 },
                 files: {
-                    "staticfiles/assets/core.css": [
+                    "staticfiles/assets/css/core.css": [
                         "src/application/_less/*.less"
                     ]
                 }
