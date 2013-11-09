@@ -70,7 +70,7 @@ module.exports.init = function(io, socket) {
     socket.on('getBook', function(data) {
         var username = socket.user.username,
             title = stripSpaces(data.title),
-            repo, path;
+            repo, path, chapters;
 
         if (!username) throw new Error('No username provided');
 
@@ -78,19 +78,22 @@ module.exports.init = function(io, socket) {
         // What information about the repo do we want?
         // Commits?
         repo = git(path);
-        repo.tree().contents(function(err, children) {
+        repo.tree().trees(function(err, sub) {
             if (err) throw err;
-
             // map over this to get stuff?
-            console.log(children);
-        });
+            chapters = sub.map(function(dir) {
+                return dir.name;
+            });
 
-        Book.find({ title: title }, function(err, book) {
-            if (err) throw err;
+            repo.chapters = chapters;
 
-            // socket.book = book;
-            book = extend(repo, book);
-            socket.emit('viewBook', book);
+            Book.find({ title: title }, function(err, book) {
+                if (err) throw err;
+
+                // socket.book = book;
+                book = extend(repo, book);
+                socket.emit('viewBook', book);
+            });
         });
     });
 
