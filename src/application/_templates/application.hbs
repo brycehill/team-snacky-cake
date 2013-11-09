@@ -10,7 +10,9 @@
                 <img {{bindAttr src="TandemApp.author.avatar_url"}} width="80" height="80">
                 <p>
                     <strong>{{TandemApp.author.displayName}}</strong><br>
-                    {{TandemApp.author.email}}<br>
+                    {{#if TandemApp.author.email}}
+                        {{TandemApp.author.email}}<br>
+                    {{/if}}
                     <a href="/logout">Logout</a>
                 </p>
             </div>
