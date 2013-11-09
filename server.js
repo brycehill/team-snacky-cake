@@ -5,7 +5,29 @@ require('nko')('QGxy2-Aqj_HFjEI2');
 var connect = require('connect'),
     express = require('express'),
     socketio = require('socket.io'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    passport = require('passport'),
+    GitHubStrategy = require('passport-github').Strategy;
+
+
+passport.serializeUser(function(user, done) {
+      done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+    done(null, obj);
+});
+
+
+passport.use(new GitHubStrategy({
+        clientID: '32a5a6f2539e177a2d34',
+        clientSecret: 'b52a62cf75d3bd6371477315a0202a43e465c631',
+        callbackURL: "http://localhost:8000/callback"
+    },
+    function(accessToken, refreshToken, profile, done) {
+        return done(null, profile);
+    }
+));
 
 
 mongoose.connect('mongodb://localhost/tandem');
@@ -22,6 +44,13 @@ server.configure(function () {
     server.use(connect.bodyParser());
     server.use(express.cookieParser());
     server.use(connect['static'](__dirname + '/staticfiles'));
+
+    server.use(express.methodOverride());
+    server.use(express.session({ secret: 'keyboard cat' }));
+
+    server.use(passport.initialize());
+    server.use(passport.session());
+
     server.use(server.router);
 });
 
@@ -81,32 +110,16 @@ server.get('/app', function (req, res) {
 });
 
 
-var githubOAuth = require('github-oauth')({
-  githubClient: '32a5a6f2539e177a2d34',
-  githubSecret: 'b52a62cf75d3bd6371477315a0202a43e465c631',
-  baseURL: 'http://team-snacky-cake.2013.nodeknockout.com/',
-  loginURI: '/login',
-  callbackURI: '/callback',
-  scope: 'user' // optional, default scope is set to user
+
+server.get('/login', passport.authenticate('github'));
+
+server.get('/callback', passport.authenticate('github', {
+    failureRedirect: '/monkey'
+}),
+function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/app');
 });
-
-server.get('/login', function (req, res) {
-    return githubOAuth.login(req, res);
-});
-
-server.get('/callback', function (req, res) {
-    console.log(req.params);
-    return githubOAuth.callback(req, res);
-});
-
-githubOAuth.on('error', function(err) {
-  console.error('there was a login error', err)
-})
-
-githubOAuth.on('token', function(token, serverResponse) {
-  console.log('here is your shiny new github oauth token', token)
-  serverResponse.end(JSON.stringify(token))
-})
 
 
 //A Route for Creating a 500 Error (Useful to keep around)

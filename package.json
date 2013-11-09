@@ -18,7 +18,9 @@
     "socket.io": "0.8.7",
     "mongoose": "~3.6.19",
     "gift": "*",
-    "github-oauth": "0.0.4"
+    "github-oauth": "0.0.4",
+    "passport": "~0.1.17",
+    "passport-github": "~0.1.5"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
