@@ -1,8 +1,11 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,700);
+
+
 html {
     height: 100%;
 }
 body {
-    background: #ccc;
+    font-family: 'Open Sans', sans-serif;
     height: 100%;
 }
 
@@ -17,25 +20,39 @@ body {
 }
 
 header {
-    border-bottom: 1px solid #ccc;
+    background-color: #A7F2E4;
+    color: #666;
+    font-weight: lighter;
+    border-bottom: 1px solid #76E0CC;
+
     padding: 10px 0;
     .container {
         position: relative;
     }
 
     h2 {
+        font-size: 37px;
+        letter-spacing: 6px;
+        font-weight: 300;
         padding-top: 5px;
         margin: 0px;
     }
 
     h4 {
+        letter-spacing: 1px;
+        font-weight: 100;
         margin: 0px;
     }
 
     .userboxanchor {
+        color: #777;
         position: absolute;
         right: 0px;
         top: 25px;
+    }
+    .userboxanchor:hover {
+        color: #444;
+        text-decoration: none;
     }
     .userbox {
         border: 1px solid #333;
