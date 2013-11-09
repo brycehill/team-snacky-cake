@@ -94,7 +94,7 @@ module.exports = function (grunt) {
                     legacyWatch: true,
                     env: {
                         ENVIRONMENT: 'dev',
-                        PORT: '8081'
+                        PORT: '8000'
                     },
                     cwd: __dirname
                 }
