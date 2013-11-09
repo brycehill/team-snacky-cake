@@ -1,1 +1,20 @@
-BHILL MAKE A LOGIN HERE
+extends layout
+
+block content
+    div.navbar.navbar-fixed-top 
+        div.container
+            div.navbar-header
+                div.logo Tandem
+            div.pull-right
+
+    div.jumbotron
+        div.container
+            h1 Hello, Authors!
+            p Odd Future jean shorts scenester, Carles polaroid you probably haven't heard of them umami Tonx +1 XOXO Pinterest.  Selvage American Apparel PBR&amp;B pug four loko raw denim.  Cred cornhole gastropub gentrify keffiyeh hashtag Tumblr, butcher locavore paleo.  90's banh mi Helvetica Pinterest, selvage PBR gluten-free.  Gastropub next level Shoreditch vinyl fanny pack you probably haven't heard of them.
+            h2 Sign in with GitHub to get started
+            form(action='#', method='post').form-signin
+                input(type='text', placeholder='Username', required, autofocus).form-control
+                input(type='password', placeholder='Password', required, autofocus).form-control
+                button.btn.btn-lg.login-btn.btn-block Sign in
+
+
