@@ -115,8 +115,6 @@ SocketEvents.prototype.getAllBooks = function(data) {
     .exec(function (err, author) {
         if (err) throw err;
 
-        console.log(author);
-
         books = author.books;
 
         that.socket.emit('foundBooks', books);
