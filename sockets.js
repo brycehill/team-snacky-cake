@@ -16,11 +16,10 @@ module.exports.init = function(io, socket) {
         if (!user) user = 'bryce';
 
         path = '/repos/' + user + '/' + title;
+        firstFile = path + '/intro.txt';
 
         fs.exists(path, function(exists) {
-            if (exists) {
-                throw new Error('Repo Exists for user ' + user);
-            }
+            if (exists) throw new Error('Repo Exists for user ' + user);
 
             fs.mkdir(path, function(err) {
                 if (err) throw err;
@@ -28,7 +27,21 @@ module.exports.init = function(io, socket) {
                 git.init(path, function (err, repo) {
                     if (err) throw err;
 
-                    // do stuff with repo?
+                    // Create an intro file and make initial commit. 
+                    fs.writeFile(firstFile, 'This is an intro file. Start writing!', function(err) {
+                        if (err) throw err;
+
+                        repo.add(firstFile, function(err) {
+                            if (err) throw err;
+
+                            repo.commit('Initial Commit', {
+                                a: true
+                            }, function(err) {
+                                if (err) throw err;
+                            });
+                        });
+                    });
+
                     var book = new Book({
                         title: title
                     });
