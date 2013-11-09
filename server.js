@@ -125,9 +125,11 @@ server.get('/app', function (req, res) {
     if (!req.session.passport.user) {
         res.redirect('/login');
     } else {
-        Author.findOne({name: req.user.username}, function (u) {
+        Author.findOne({username: req.user.username}, function (err, u) {
+            if (err) throw err;
+
             if (!u) {
-                var u = new Author({name: req.user.username});
+                var u = new Author({username: req.user.username});
                 u.save();
             }
 
