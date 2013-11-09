@@ -57,7 +57,7 @@ module.exports = function (grunt) {
                     'src/application/_less/*.less'
                 ],
                 tasks: [
-                    'less.core'
+                    'less:core'
                 ],
                 options: {
                     spawn: false
