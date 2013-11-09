@@ -19,12 +19,13 @@ function SocketEvents(socket) {
 
 SocketEvents.prototype.addBook = function(data) {
     var username = this.user.username,
-        title = stripSpaces(data.title),
-        that = this;
+        title = data.title,
+        that = this,
+        path;
 
     if (!username) throw new Error('No username provided');
 
-    path = '/repos/' + username + '/' + title;
+    path = '/repos/' + username + '/' + stripSpaces(title);
     firstFile = path + '/intro.txt';
 
     fs.exists(path, function(exists) {
