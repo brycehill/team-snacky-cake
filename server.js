@@ -5,7 +5,6 @@ require('nko')('QGxy2-Aqj_HFjEI2');
 var connect = require('connect'),
     express = require('express'),
     socketio = require('socket.io'),
-    port = (isProduction ? 80 : 8000),
     mongoose = require('mongoose');
 
 
