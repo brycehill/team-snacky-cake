@@ -16,7 +16,8 @@
     "express": "2.5.2",
     "jade": "0.20.0",
     "socket.io": "0.8.7",
-    "mongoose": "~3.6.19"
+    "mongoose": "~3.6.19",
+    "gift": "*"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
