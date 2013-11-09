@@ -1,22 +1,27 @@
 var Book = require('./models/Book'),
     git = require('gift'),
-    fs = require('fs');
+    fs = require('fs'),
+    mkdirp = require('mkdirp');
 
 module.exports.init = function(io, socket) {
 
     console.log('Init Sockets');
+    socket.user = socket.handshake.session.passport.user;
 
     // Add a book (repo)
     socket.on('addBook', function(data) {
-        var user = data.user,
+        console.log('adding book');
+        console.log(data);
+        var user = socket.user.username,
             title;
 
         title = data.title.replace( /\s/g, '')
-                    .replace( /\W/g, '' );
+                          .replace( /\W/g, '' );
 
         // check if path exists.
 
-        if (!user) user = 'bryce';
+        // need to returh or error here once session is done
+        if (!user) throw new Error('No username provided');
 
         path = '/repos/' + user + '/' + title;
         firstFile = path + '/intro.txt';
@@ -24,7 +29,7 @@ module.exports.init = function(io, socket) {
         fs.exists(path, function(exists) {
             if (exists) throw new Error('Repo Exists for user ' + user);
 
-            fs.mkdir(path, function(err) {
+            mkdirp(path, function(err) {
                 if (err) throw err;
 
                 git.init(path, function (err, repo) {
@@ -59,11 +64,19 @@ module.exports.init = function(io, socket) {
 
     // Gets a book (repo) and sends it back.
     socket.on('getBook', function(data) {
-        var path = data.path,
-            repo;
+        console.log('get book');
+        console.log(data);
+        var title, repo, path;
 
-        // repo = git(path);
-        Book.find({ path: path }, function(err, book) {
+        title = data.title.replace( /\s/g, '')
+                          .replace( /\W/g, '' );
+
+        // need to returh or error here once session is done
+        if (!user) user = 'bryce';
+
+        path = '/repos/' + user + '/' + title;
+        repo = git(title);
+        Book.find({ title: title }, function(err, book) {
             if (err) throw err;
 
             socket.book = book;
@@ -81,8 +94,18 @@ module.exports.init = function(io, socket) {
         repo.commit(message, function(err) {
             if (err) throw err;
 
-            socket.emit('bookSaved', true)
+            socket.emit('bookSaved', {success: true});
         });
+    });
+
+    // Save the file the user is working on. 
+    socket.on('autoSave', function(data) {
+        var blob = data.blob; 
+
+    });
+
+    // Creates a new chapter, essentially a directory with a new file in it. 
+    socket.on('createChapter', function(data) {
 
     });
 };
