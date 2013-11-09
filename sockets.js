@@ -1,4 +1,7 @@
 var Book = require('./models/Book'),
+    Author = require('./models/Author'),
+    mongoose = require('mongoose'),
+    ObjectId = mongoose.Types.ObjectId,
     git = require('gift'),
     fs = require('fs'),
     mkdirp = require('mkdirp');
@@ -10,9 +13,7 @@ module.exports.init = function(io, socket) {
 
     // Add a book (repo)
     socket.on('addBook', function(data) {
-        console.log('adding book');
-        console.log(data);
-        var user = socket.user.username,
+        var username = socket.user.username,
             title;
 
         title = data.title.replace( /\s/g, '')
@@ -21,13 +22,13 @@ module.exports.init = function(io, socket) {
         // check if path exists.
 
         // need to returh or error here once session is done
-        if (!user) throw new Error('No username provided');
+        if (!username) throw new Error('No username provided');
 
-        path = '/repos/' + user + '/' + title;
+        path = '/repos/' + username + '/' + title;
         firstFile = path + '/intro.txt';
 
         fs.exists(path, function(exists) {
-            if (exists) throw new Error('Repo Exists for user ' + user);
+            if (exists) throw new Error('Repo Exists for user ' + username);
 
             mkdirp(path, function(err) {
                 if (err) throw err;
@@ -56,7 +57,18 @@ module.exports.init = function(io, socket) {
 
                     book.save(function(err) {
                         if (err) throw err;
+
+                        // Not sure if there is a better way to just get the 
+                        // number and not the objectId object
+                        var id = book._id.toString();
+
+                        Author.update({ username: username }, { 
+                            $push: { books: id }
+                        }, function(err) {
+                            if (err) throw err; 
+                        });
                     });
+
                 });
             });
         });
