@@ -19,7 +19,7 @@ module.exports = function (grunt) {
                 src: [
                     '.tmp/templates.js',
                     'src/application/application.js',
-                    'src/application/{controller,model,view}/*.js',
+                    'src/application/{controller,model,view,routes}/*.js',
                     'src/application/app.js'
                 ],
                 dest: 'staticfiles/assets/js/core.js'
@@ -70,7 +70,7 @@ module.exports = function (grunt) {
                 ],
                 tasks: [
                     'emberTemplates',
-                    'uglify'
+                    'uglify:core'
                 ],
                 options: {
                     spawn: false
