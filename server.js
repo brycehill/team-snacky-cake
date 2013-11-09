@@ -52,7 +52,7 @@ server.error(function (err, req, res, next) {
 });
 
 server.listen(port);
-io = socketio.listen(port);
+io = socketio.listen(server);
 
 io.sockets.on('connection', function(socket) {
     require('./sockets').init(io, socket);
