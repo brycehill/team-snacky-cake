@@ -15,14 +15,15 @@ module.exports.init = function(io, socket) {
             title = data.title;
 
         // check if path exists. 
-        
-        git.init(__dirname + path, function (err, repo) {
+
+
+        git.init(__dirname + '/' + path, function (err, repo) {
             if (err) throw err;
 
             // do stuff with repo
             var book = new Book({
                 title: title,
-                path: __dirname + path
+                path: path
             });
 
             book.save(function(err) {
