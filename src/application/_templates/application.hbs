@@ -1,5 +1,26 @@
+<header>
+    <div class="container">
+        <img src="/assets/img/logo_md.png">
+        Tandem Collaborative
+        Writing Studio...
+        <a href="javascript:;" class="userboxanchor" {{action openUp target="TandemApp.author"}}>&gt; {{TandemApp.author.displayName}}</a>
+        {{#if TandemApp.author.open}}
+            <div class="backdrop" {{action closeUp target="TandemApp.author"}}></div>
+            <div class="userbox">
+                <img {{bindAttr src="TandemApp.author.avatar_url"}}>
+                <p>
+                    <strong>{{TandemApp.author.displayName}}</strong><br>
+                    {{TandemApp.author.email}}<br>
+                    <a href="/logout">Logout</a>
+                </p><br clear="left">
+            </div>
+        {{/if}}
+    </div>
+</header>
+
 <div class="container">
-<h1>Hello {{TandemApp.author.displayName}}</h1>
+<h1>Hello </h1>
 
 {{outlet}}
+
 </div>
