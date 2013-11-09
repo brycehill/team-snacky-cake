@@ -16,7 +16,8 @@ function SocketEvents(socket) {
 
 SocketEvents.prototype.addBook = function(data) {
     var username = this.user.username,
-        title = stripSpaces(data.title);
+        title = stripSpaces(data.title),
+        that = this;
 
     if (!username) throw new Error('No username provided');
 
@@ -47,21 +48,26 @@ SocketEvents.prototype.addBook = function(data) {
                     });
                 });
 
-                var book = new Book({
-                    title: title
-                });
 
-                book.save(function(err) {
+                Author.findOne({username: username}, function (err, author) {
                     if (err) throw err;
 
-                    // Not sure if there is a better way to just get the 
-                    // number and not the objectId object
-                    var id = book._id.toString();
+                    var book = new Book(
+                        {
+                            title: title,
+                            owner: author,
+                            path: path
+                        }
+                    );
 
-                    Author.update({ username: username }, {
-                        $push: { books: id }
-                    }, function(err) {
+                    book.save(function (err, b) {
                         if (err) throw err;
+
+                        Author.update({username: username}, {$push: {books: b}}, function (err, numAffected, rawResponse) {
+                            if (err) throw err;
+
+                            that.socket.emit('monkey', {message: 'success'});
+                        });
                     });
                 });
             });

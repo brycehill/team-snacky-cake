@@ -3,10 +3,12 @@ var mongoose = require('mongoose'),
 
 var Author = new Schema({
     username: String,
-    books: [{
-        _id: Number,
-        owner: Boolean
-    }]
+    books: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Book'
+        }
+    ]
 });
 
 module.exports = mongoose.model('Author', Author);
