@@ -1,0 +1,10 @@
+{
+  "name": "team-snacky-cake",
+  "version": "0.0.1",
+  "dependencies": {
+    "modernizr": "~2.6.2",
+    "jquery": "~1.10.2",
+    "ember": ">=1.0.0"
+  },
+  "devDependencies": {}
+}

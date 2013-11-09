@@ -1,0 +1,21 @@
+{
+  "name": "ember",
+  "version": "1.2.0-beta.3",
+  "main": [
+    "./ember.js"
+  ],
+  "dependencies": {
+    "jquery": ">= 1.7",
+    "handlebars": "1.0.0"
+  },
+  "homepage": "https://github.com/components/ember",
+  "_release": "1.2.0-beta.3",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.2.0-beta.3",
+    "commit": "7409dff34357c890d015e185ef0df2f9287ff1c1"
+  },
+  "_source": "git://github.com/components/ember.git",
+  "_target": ">=1.0.0",
+  "_originalSource": "ember"
+}
