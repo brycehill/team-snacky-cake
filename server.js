@@ -129,7 +129,7 @@ server.get('/app', function (req, res) {
             if (err) throw err;
 
             if (!u) {
-                var u = new Author({username: req.user.username});
+                u = new Author({username: req.user.username});
                 u.save();
             }
 
@@ -147,7 +147,11 @@ server.get('/app', function (req, res) {
 });
 
 
-server.get('/login', passport.authenticate('github'));
+server.get('/login', passport.authenticate('github', {
+    scope: [
+        'public_repo'
+    ]
+}));
 
 server.get('/callback', passport.authenticate('github', {
     failureRedirect: '/login'
