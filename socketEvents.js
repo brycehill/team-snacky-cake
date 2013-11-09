@@ -100,6 +100,16 @@ SocketEvents.prototype.getBook = function(data) {
     });
 };
 
+SocketEvents.prototype.getAllBooks = function(data) {
+    var username = this.user.username;
+
+    Author.findOne({ username: username }, function(err, author) {
+        var books = author.books;
+
+        socket.emit('foundBooks', books);
+    });
+};
+
 SocketEvents.prototype.saveBook = function(data) {
     var self = this,
         message = data.message,

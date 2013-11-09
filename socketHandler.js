@@ -13,6 +13,7 @@ module.exports.init = function(socket) {
     socket.on('addBook', s.addBook.bind(s));
     // Gets a book (repo) and sends it back.
     socket.on('getBook', s.getBook.bind(s));
+    socket.on('getAllBooks', s.getAllBooks.bind(s));
     // Save a book - Commit!
     socket.on('saveBook', s.saveBook.bind(s));
     // Save the file the user is working on. 
