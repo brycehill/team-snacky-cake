@@ -1,1 +1,1 @@
-var blah = 'duh';
+TandemApplication.ApplicationController = Ember.ArrayController.create({});

@@ -11,15 +11,16 @@ module.exports = function (grunt) {
                     'src/vendor/jquery/jquery.min.js',
                     'src/vendor/modernizr/modernizr.js',
                     'src/vendor/handlebars/handlebars.js',
-                    'src/vendor/ember/ember.min.js'
+                    'src/vendor/ember/ember.js'
                 ],
                 dest: 'staticfiles/assets/js/vendor.js'
             },
             core: {
                 src: [
                     '.tmp/templates.js',
-                    'src/application/*.js',
-                    'src/application/{controller,model,view}/*.js'
+                    'src/application/application.js',
+                    'src/application/{controller,model,view}/*.js',
+                    'src/application/app.js'
                 ],
                 dest: 'staticfiles/assets/js/core.js'
             }

@@ -1,0 +1,1 @@
+var TandemApp = TandemApplication.create({});
