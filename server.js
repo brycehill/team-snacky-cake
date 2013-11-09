@@ -114,8 +114,8 @@ server.get('/', function (req, res) {
     res.render('index.jade', {
         locals : {
             title : 'Tandem :: Co-Authoring Done Right',
-            description: 'Your Page Description',
-            author: 'Your Name',
+            description: 'Take co-authoring to the next level with Tandem. Virtually collaborate on your next masterpiece with authors around the world.',
+            author: 'Team Snacky Cake',
             analyticssiteid: 'XXXXXXX'
         }
     });
@@ -137,10 +137,10 @@ server.get('/app', function (req, res) {
 
             res.render('app.jade', {
                 locals : {
-                    title : 'Your Page Title',
+                    title : 'Tandem :: Do A Thing',
                     uid: u._id.toString(),
-                    description: 'Your Page Description',
-                    author: 'Your Name',
+                    description: 'Take co-authoring to the next level with Tandem. Virtually collaborate on your next masterpiece with authors around the world.',
+                    author: 'Team Snacky Cake',
                     analyticssiteid: 'XXXXXXX'
                 }
             });

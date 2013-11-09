@@ -3,3 +3,11 @@ Index Page
 <label for="bookName">Book Name</label>
 {{input value=bookName type="text" placeholder="Enter your book name"}}
 <button id="addBook" {{action 'createBook'}}>Create a new Book</button>
+
+Books
+<ul class="bookList">
+	{{#each}}
+	<li>{{book.title}}</li>
+	<li>{{book.author}}</li>
+	{{/each}}
+</ul>
