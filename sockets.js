@@ -1,7 +1,6 @@
 var Book = require('./models/Book'),
     Author = require('./models/Author'),
-    mongoose = require('mongoose'),
-    ObjectId = mongoose.Types.ObjectId,
+    extend = require('util-extend'),
     git = require('gift'),
     fs = require('fs'),
     mkdirp = require('mkdirp');
@@ -14,14 +13,8 @@ module.exports.init = function(io, socket) {
     // Add a book (repo)
     socket.on('addBook', function(data) {
         var username = socket.user.username,
-            title;
+            title = stripSpaces(data.title);
 
-        title = data.title.replace( /\s/g, '')
-                          .replace( /\W/g, '' );
-
-        // check if path exists.
-
-        // need to returh or error here once session is done
         if (!username) throw new Error('No username provided');
 
         path = '/repos/' + username + '/' + title;
@@ -62,13 +55,12 @@ module.exports.init = function(io, socket) {
                         // number and not the objectId object
                         var id = book._id.toString();
 
-                        Author.update({ username: username }, { 
+                        Author.update({ username: username }, {
                             $push: { books: id }
                         }, function(err) {
-                            if (err) throw err; 
+                            if (err) throw err;
                         });
                     });
-
                 });
             });
         });
@@ -76,22 +68,28 @@ module.exports.init = function(io, socket) {
 
     // Gets a book (repo) and sends it back.
     socket.on('getBook', function(data) {
-        console.log('get book');
-        console.log(data);
-        var title, repo, path;
+        var username = socket.user.username,
+            title = stripSpaces(data.title),
+            repo, path;
 
-        title = data.title.replace( /\s/g, '')
-                          .replace( /\W/g, '' );
+        if (!username) throw new Error('No username provided');
 
-        // need to returh or error here once session is done
-        if (!user) user = 'bryce';
+        path = '/repos/' + username + '/' + title;
+        // What information about the repo do we want?
+        // Commits?
+        repo = git(path);
+        repo.tree().contents(function(err, children) {
+            if (err) throw err;
 
-        path = '/repos/' + user + '/' + title;
-        repo = git(title);
+            // map over this to get stuff?
+            console.log(children);
+        });
+
         Book.find({ title: title }, function(err, book) {
             if (err) throw err;
 
-            socket.book = book;
+            // socket.book = book;
+            book = extend(repo, book);
             socket.emit('viewBook', book);
         });
     });
@@ -117,7 +115,46 @@ module.exports.init = function(io, socket) {
     });
 
     // Creates a new chapter, essentially a directory with a new file in it. 
-    socket.on('createChapter', function(data) {
+    socket.on('addChapter', function(data) {
+        var username = socket.user.username,
+            file = 'chapter.txt',
+            chapter = stripSpaces(data.chapter),
+            title = stripSpaces(data.title),
+            path;
 
+        if (!username) throw new Error('No username provided');
+
+        // TODO save the git instance and/or the path stuff in socket
+        path = '/repos/' + username + '/' + title;
+        repo = git(path);
+        path = path + '/' + chapter;
+        file = path + '/' + file;
+
+        fs.exists(path, function(exists) {
+            if (exists) throw new Error('Chapter name Exists for user ' + username);
+
+            mkdirp(path, function(err) {
+                if (err) throw err;
+
+                fs.writeFile(file, 'Start writing ' + chapter, function(err) {
+                    if (err) throw err;
+
+                    repo.add(path, function(err) {
+                        if (err) throw err;
+
+                        repo.commit('Initial commit of new chapter: ' + chapter, {
+                            a: true
+                        }, function(err) {
+                            if (err) throw err;
+                        });
+                    });
+                });
+            });
+        });
     });
+
+    function stripSpaces(str) {
+        return str.replace( /\s/g, '')
+                  .replace( /\W/g, '' );
+    }
 };
