@@ -3,3 +3,4 @@ tandem.sublime-workspace
 node_modules/* 
 .jshintrc
 .DS_Store
+/staticfiles/*
