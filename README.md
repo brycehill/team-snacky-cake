@@ -72,3 +72,4 @@ including:
 
 If you have any issues, we're on IRC in #nodeknockout on freenode, email us at
 <help@nodeknockout.com>, or tweet [@node_knockout](https://twitter.com/node_knockout).
+
