@@ -1,9 +1,6 @@
 TandemApplication.reopen({
     IndexController: Ember.ArrayController.extend({
         actions: {
-        	init: function() {
-        		TandemApp.get('socket').emit('gimmeYerBooks');
-        	},
             createBook: function() {
             	var book = {};
             	book.title = this.get('bookName');
