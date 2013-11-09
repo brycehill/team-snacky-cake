@@ -1,4 +1,5 @@
 tandem.sublime-project
 tandem.sublime-workspace
 node_modules/ 
+.jshintrc
 .DS_Store
