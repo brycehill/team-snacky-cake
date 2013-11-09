@@ -4,7 +4,9 @@ var Book = require('./models/Book'),
     extend = require('util-extend'),
     git = require('gift'),
     fs = require('fs'),
-    mkdirp = require('mkdirp');
+    mkdirp = require('mkdirp'),
+    mongoose = require('mongoose'),
+    ObjectId = mongoose.Types.ObjectId;
 
 function SocketEvents(socket) {
     console.log('construct SE');
@@ -48,7 +50,6 @@ SocketEvents.prototype.addBook = function(data) {
                         });
                     });
                 });
-
 
                 Author.findOne({username: username}, function (err, author) {
                     if (err) throw err;
@@ -140,37 +141,54 @@ SocketEvents.prototype.saveBook = function(data) {
 };
 
 SocketEvents.prototype.addChapter = function(data) {
-    var username = this.user.username,
-        bookId = data.bookId,
+    var that = this,
+        username = this.user.username,
+        bookId = new ObjectId(data.bookId),
         number = data.number,
         title = data.title,
-        fileName = stripSpaces(title),
-        path, fileName;
+        fileName = stripSpaces(title);
 
     if (!username) throw new Error('No username provided');
 
-    // TODO save the git instance and/or the path stuff in socket
-    path = '/repos/' + username + '/';
-    repo = git(path);
+    Book.findOne({_id: bookId}, function (err, book) {
+        if (err) throw new Error('Book could not be located');
 
-    fs.exists(path, function(exists) {
-        if (exists) throw new Error('Chapter name Exists for user ' + username);
+        repo = git(book.path);
+        filepath = book.path + '/' +fileName;
 
-        fs.writeFile(path + fileName, 'Start writing chapter ' + title + ' now!', function(err) {
-            if (err) throw err;
+        fs.exists(book.path, function(exists) {
+            if (!exists) throw new Error('Book path does not exits');
 
-            repo.add(path, function(err) {
+            fs.writeFile(filepath, 'Start writing chapter ' + title + ' now!', function(err) {
                 if (err) throw err;
 
-                repo.commit('Initial commit of new chapter: ' + title, {
-                    a: true
-                }, function(err) {
+                repo.add(fileName, function(err) {
                     if (err) throw err;
-     
+
+                    repo.commit('Initial commit of new chapter: ' + title, {
+                        a: false
+                    }, function(err) {
+                        if (err) throw err;
+
+                        var chapter = new Chapter(
+                            {
+                                title: data.title,
+                                number: data.number,
+                                book: book
+                            }
+                        );
+
+                        chapter.save(function (err, c) {
+                            if (err) throw err;
+
+                            that.socket.emit('chapterCreate', {message: 'success'});
+                        });
+                    });
                 });
             });
         });
     });
+
 };
 
 var stripSpaces = function(str) {
