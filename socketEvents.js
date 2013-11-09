@@ -107,13 +107,21 @@ SocketEvents.prototype.getBook = function(data) {
 };
 
 SocketEvents.prototype.getAllBooks = function(data) {
-    var username = this.user.username;
+    var username = this.user.username,
+        that = this;
 
-    Author.findOne({ username: username }, function(err, author) {
-        var books = author.books;
+    Author.findOne({ username: username })
+    .populate('books')
+    .exec(function (err, author) {
+        if (err) throw err;
 
-        socket.emit('foundBooks', books);
+        console.log(author);
+
+        books = author.books;
+
+        that.socket.emit('foundBooks', books);
     });
+
 };
 
 SocketEvents.prototype.saveBook = function(data) {
@@ -126,7 +134,7 @@ SocketEvents.prototype.saveBook = function(data) {
     repo.commit(message, function(err) {
         if (err) throw err;
 
-        self.sockets.emit('bookSaved', {success: true});
+        self.socket.emit('bookSaved', {success: true});
     });
 };
 
