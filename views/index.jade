@@ -1,19 +1,36 @@
 extends layout
 
 block content
-    header
-        div.container
-            div.pull-left.logo 
-                a(href='#') Tandem
-            div.pull-right 
-                a(href='#') Login
+    //- header
+    //-     div.container
+    //-         div.pull-left.logo 
+    //-             a(href='#') Tandem
+    //-         div.pull-right 
+    //-             a(href='#') Login
 
     div.jumbotron
         div.container
-            h1 Hello, Authors!
-            p Artisan raw denim Austin +1 synth photo booth blog ugh skateboard selvage, actually occupy.  Craft beer swag cornhole food truck retro Neutra hashtag Tonx pour-over cliche try-hard locavore tote bag kitsch.  Flannel VHS bespoke, biodiesel ennui Blue Bottle slow-carb ethnic post-ironic.  Post-ironic Brooklyn readymade, hella Cosby sweater ugh Pitchfork fingerstache yr.  Odd Future Pinterest small batch, ugh disrupt beard tote bag wayfarers banh mi Tonx.  Bicycle rights Tumblr disrupt, authentic gastropub mumblecore cred PBR Marfa.  Viral tote bag 90's Portland.
-            p Sign in with GitHub to get started 
-                a(href='/login').btn.btn-lg.login-btn Sign in &raquo;
+            h1 Ready to write? 
+            p 
+                | Take co-authoring to the next level with Tandem. Virtually collaborate on 
+                | your next masterpiece with authors around the world. Ready to get started?
+                a(href='/login').login Sign in with GitHub 
+                | and start creating your next book now!
+
+    div.columns
+        div.container
+            div.row
+                div.col-md-4
+                    h2 Why Git?
+                    p 
+                        | Built in revisioning makes sure you never lose that amazing chapter.
+                div.col-md-4
+                    h2 Why ?
+                    p blah
+                div.col-md-4
+                    h2 Why Git?
+                    p blah
+
                 
 
 
