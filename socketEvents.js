@@ -1,5 +1,6 @@
 var Book = require('./models/Book'),
     Author = require('./models/Author'),
+    Chapter = require('./models/Chapter'),
     extend = require('util-extend'),
     git = require('gift'),
     fs = require('fs'),
@@ -115,6 +116,8 @@ SocketEvents.prototype.getAllBooks = function(data) {
     .exec(function (err, author) {
         if (err) throw err;
 
+        console.log(author);
+
         books = author.books;
 
         that.socket.emit('foundBooks', books);
@@ -138,36 +141,32 @@ SocketEvents.prototype.saveBook = function(data) {
 
 SocketEvents.prototype.addChapter = function(data) {
     var username = this.user.username,
-        file = 'chapter.txt',
-        chapter = stripSpaces(data.chapter || 'Default Chapter Name'),
-        title = stripSpaces(data.title || 'Default Title'),
-        path;
+        bookId = data.bookId,
+        number = data.number,
+        title = data.title,
+        fileName = stripSpaces(title),
+        path, fileName;
 
     if (!username) throw new Error('No username provided');
 
     // TODO save the git instance and/or the path stuff in socket
-    path = '/repos/' + username + '/' + title;
+    path = '/repos/' + username + '/';
     repo = git(path);
-    path = path + '/' + chapter;
-    file = path + '/' + file;
 
     fs.exists(path, function(exists) {
         if (exists) throw new Error('Chapter name Exists for user ' + username);
 
-        mkdirp(path, function(err) {
+        fs.writeFile(path + fileName, 'Start writing chapter ' + title + ' now!', function(err) {
             if (err) throw err;
 
-            fs.writeFile(file, 'Start writing ' + chapter, function(err) {
+            repo.add(path, function(err) {
                 if (err) throw err;
 
-                repo.add(path, function(err) {
+                repo.commit('Initial commit of new chapter: ' + title, {
+                    a: true
+                }, function(err) {
                     if (err) throw err;
-
-                    repo.commit('Initial commit of new chapter: ' + chapter, {
-                        a: true
-                    }, function(err) {
-                        if (err) throw err;
-                    });
+     
                 });
             });
         });
