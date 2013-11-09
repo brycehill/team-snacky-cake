@@ -119,7 +119,7 @@ server.get('/', function (req, res) {
     });
 });
 
-var Author = require('./models/author');
+var Author = require('./models/Author');
 
 server.get('/app', function (req, res) {
     if (!req.session.passport.user) {
