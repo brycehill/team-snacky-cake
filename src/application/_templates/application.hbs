@@ -1,8 +1,12 @@
 <header>
     <div class="container">
-        <img src="/assets/img/logo_md.png">
-        Tandem Collaborative
-        Writing Studio...
+        <img src="/assets/img/logo_md.png" style="margin-right:20px;float:left;">
+        <h2>
+            Tandem Collaborative
+        </h2>
+        <h4>
+            Writing Studio...
+        </h4>
         <a href="javascript:;" class="userboxanchor" {{action openUp target="TandemApp.author"}}>&gt; {{TandemApp.author.displayName}}</a>
         {{#if TandemApp.author.open}}
             <div class="backdrop" {{action closeUp target="TandemApp.author"}}></div>
