@@ -1,1 +1,3 @@
-TandemApplication.ApplicationController = Ember.ArrayController.create({});
+TandemApplication.ApplicationController = Ember.ArrayController.extend({
+	
+});
