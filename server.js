@@ -5,6 +5,7 @@ require('nko')('QGxy2-Aqj_HFjEI2');
 var connect = require('connect'),
     express = require('express'),
     socketio = require('socket.io'),
+    socketHandler = require('./socketHandler'),
     mongoose = require('mongoose'),
     passport = require('passport'),
     GitHubStrategy = require('passport-github').Strategy,
@@ -102,9 +103,10 @@ io.set('authorization', function (data, accept) {
     }
 });
 
-io.sockets.on('connection', function(socket) {
-    require('./sockets').init(io, socket);
 
+io.sockets.on('connection', function(socket) {
+    socket.user = socket.handshake.session.passport.user;
+    socketHandler.init(socket);
     console.log('A socket with sessionID ' + socket.handshake.sessionID + ' connected!');
 });
 
