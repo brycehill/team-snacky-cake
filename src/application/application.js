@@ -7,3 +7,5 @@ var TandemApplication = Ember.Application.extend({
         });
     }
 });
+
+Ember.LinkView.reopen({attributeBindings:['style']});
