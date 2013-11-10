@@ -2,9 +2,9 @@
 <a href="#/">Book List</a> | {{controller.book.title}}
 <br><br>
 
+
+
 <div id="chapterlist" {{bindAttr class="controller.book.chaptersOpen:chaptersOpen:chaptersClose"}}>
-
-
     <form {{action createChapter on="submit"}}>
         <div class="container">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 add-book-form">
@@ -33,4 +33,4 @@
     </div>
 </div>
 
-{{view Ember.TextArea}}
+{{view Ember.TextArea valueBinding="controller.book.chapterContentNew"}}

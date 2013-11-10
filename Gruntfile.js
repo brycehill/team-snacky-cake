@@ -8,6 +8,7 @@ module.exports = function (grunt) {
             options: {},
             vendor: {
                 src: [
+                    'src/vendor/diff_match_patch.js',
                     'src/vendor/jquery/jquery.min.js',
                     'src/vendor/modernizr/modernizr.js',
                     'src/vendor/handlebars/handlebars.js',
