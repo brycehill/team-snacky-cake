@@ -5,6 +5,7 @@ var Book = require('./models/Book'),
     fs = require('fs'),
     mkdirp = require('mkdirp'),
     path = require('path'),
+    exec = require('child_process').exec,
     mongoose = require('mongoose'),
     ObjectId = mongoose.Types.ObjectId;
 
@@ -79,8 +80,31 @@ SocketEvents.prototype.addBook = function(data) {
 };
 
 SocketEvents.prototype.deleteBook = function(data) {
+    var bookId = new ObjectId(data._id);
 
-}
+    Author.find().where('books').in([bookId]).exec(function(err, authors) {
+        if (err) console.error(err);
+
+        authors.forEach(function(author) {
+            author.books.splice(author.books.indexOf(bookId),1);
+            author.save();
+        });
+
+        Book.findById(bookId, function(err, book) {
+            if (err) console.log(err);
+
+            if (book.path && book.path !== '/') {
+                // remove every file in the repo
+                var bash = 'rm -rf ' + book.path;
+                exec(bash);
+            }
+        });
+
+        Book.remove({ _id: bookId }, function (err) {
+            if (err) console.log(err);
+        });
+    });
+};
 
 SocketEvents.prototype.getBook = function(data) {
     var self = this,
