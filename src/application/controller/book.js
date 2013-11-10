@@ -52,7 +52,6 @@ TandemApplication.reopen({
                 }
             });
             TandemApp.get('socket').on('chapterCommit', function(data) {
-                console.log('saved!');
                 $('#diff').empty();
                 $('.live-diff .msg').text('Revision Successfully Made');
 

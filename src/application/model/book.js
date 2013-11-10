@@ -48,7 +48,7 @@
             },
             saveRevision: function() {
                 var data = {
-                    message: 'this is my commit message',
+                    message: 'Commiting ' + this.get('currentChapterName') + ' at ' + new Date(),
                     bookId: this.get('id'),
                     idx: this.get('currentChapter')
                 };
