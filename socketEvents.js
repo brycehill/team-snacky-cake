@@ -410,8 +410,7 @@ SocketEvents.prototype.updateChapter = function(data) {
                 if (err) that.emitError(err);
 
                 fullDiff = diffs[0].diff;
-                fullDiff = fullDiff.replace('\n', '<br>');
-                // fullDiff = fullDiff.replace('+', '<br>+');
+                fullDiff = fullDiff.replace(/\n/g, '<br>');
                 that.socket.emit('chapterSaved', { contents: newText, fullDiff: fullDiff });
             });
         });

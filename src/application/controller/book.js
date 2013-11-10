@@ -76,8 +76,22 @@ TandemApplication.reopen({
                 var diff = data.fullDiff,
                     $diff = $('#diff');
 
-                $diff.empty().append(diff)
-                     .scrollTop($diff[0].scrollHeight);
+                $diff.empty()
+                tmp = diff.split('<br>');
+                // console.log(typeof tmp);
+                // console.log(tmp);
+                newDiff = tmp.map(function(line, i) {
+                    if (line.charAt() == '+') {
+                        return '<span class=\'addition\'>'+line+'</span>';
+                    } else if (line.charAt() == '-') {
+                        return '<span class=\'subtraction\'>'+line+'</span>';
+                    } else {
+                        return line;
+                    }
+                });
+
+                console.log(newDiff);
+                $diff.append(newDiff).scrollTop($diff[0].scrollHeight);
 
             });
         },
