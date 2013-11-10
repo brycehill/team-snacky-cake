@@ -112,12 +112,15 @@ io.sockets.on('connection', function(socket) {
 
     socketHandler.init(socket, allClients);
 
-    socket.on('disconnect', function(socket) {
-        delete allClients[socket.user.username];
+    socket.on('disconnect', function() {
+        if (socket.user) {
+            delete allClients[socket.user.username];
+        }
     });
 
     console.log('A socket with sessionID ' + socket.handshake.sessionID + ' connected!');
 });
+
 
 server.get('/', function (req, res) {
     res.render('index.jade', {

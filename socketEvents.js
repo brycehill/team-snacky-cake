@@ -73,7 +73,7 @@ SocketEvents.prototype.addBook = function(data) {
                 });
                 // 
                 // save to github repo
-                console.log(that.user);
+                // console.log(that.user);
 
                 Author.findOne({username: username}, function (err, author) {
                     if (err) return that.emitError(err);
@@ -354,7 +354,14 @@ SocketEvents.prototype.addCoAuthor = function(data) {
             // found a user, add the book Id to them.
             author.books.push(bookId);
             author.save();
-            // self.joinRoom(data._id);
+
+            Book.findById(data._id, function(err, b) {
+                if (err) self.emitError(err);
+console.log('adding co author ALL CLIENTS');
+console.log(self.allClients);
+                // updating co author's book view
+                self.allClients[coAuthor].emit('bookAdded', b);
+            });
         });
     }
 };

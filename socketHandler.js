@@ -1,10 +1,10 @@
 var SocketEvents = require('./socketEvents');
 
-module.exports.init = function(socket) {
+module.exports.init = function(socket, allClients) {
 
     // console.log('Init Sockets');
 
-    var s = new SocketEvents(socket);
+    var s = new SocketEvents(socket, allClients);
     // @TODO figure out how to handle multiple users on a socket. 
     socket.emit('setupUser', socket.user);
     // send back book list?
