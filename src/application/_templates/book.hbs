@@ -3,9 +3,26 @@
 <br><br>
 
 <div id="chapterlist" {{bindAttr class="controller.book.chaptersOpen:chaptersOpen:chaptersClose"}}>
+
+
+    <form {{action createChapter on="submit"}}>
+        <div class="container">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 add-book-form">
+            <div class="input-group">
+                    {{input value=controller.newChapterTitle type="text" class='form-control' placeholder="New Chapter Title"}}
+                    <span class="input-group-btn">
+                        <button id="addChapter" class='btn btn-default' type='submit'>Create</button>
+                    </span>
+            </div>
+        </div>
+        </div>
+    </form>
+
+
     <div class="scrollingchapters">
-        Chapter 1<br>
-        Chapter 2<br>
+        {{#each chapter in controller.book.chapters}}
+            {{chapter.title}}<br>
+        {{/each}}
     </div>
     <div class="holder">
         <div class="tabbie">
