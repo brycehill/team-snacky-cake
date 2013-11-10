@@ -4,10 +4,16 @@ Index Page
 {{input value=bookName type="text" placeholder="Enter your book name"}}
 <button id="addBook" {{action 'createBook'}}>Create a new Book</button>
 
-Books
-<ul class="bookList">
-	{{#each book in controller.books.content}}
-	<li>{{book.title}}</li>
-	<li>{{book.author}}</li>
-	{{/each}}
-</ul>
+<div class="bookContainer">
+	<h2>Books</h2>
+	<ul class="bookList">
+		{{#each book in controller.books.content}}
+		<li>
+			<div class="book">
+				<p class="title">{{book.title}}</p>
+				<p class="author">Author</p>
+			</div>
+		</li>
+		{{/each}}
+	</ul>
+</div>
