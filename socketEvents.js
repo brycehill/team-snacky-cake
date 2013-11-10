@@ -205,9 +205,6 @@ SocketEvents.prototype.getAllBooks = function() {
 };
 
 SocketEvents.prototype.saveChapter = function(data) {
-console.log('Save Chapter!');
-console.log(data);
-
     var self = this,
         message = data.message,
         bookId = new ObjectId(data.bookId),
