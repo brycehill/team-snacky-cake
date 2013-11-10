@@ -365,7 +365,7 @@ SocketEvents.prototype.updateChapter = function(data) {
         i = data.idx,
         diff = data.diff,
         that = this,
-        repo, dmp, patches, res, ws;
+        repo, dmp, patches, res, ws, fullDiff;
 
     // diff to object
     Book.findOne({ _id: bookId }, function(err, book) {
@@ -390,7 +390,16 @@ SocketEvents.prototype.updateChapter = function(data) {
             ws = fs.createWriteStream(filePath);
             ws.write(newText);
 
-            that.socket.emit('chapterSaved', { contents: newText });
+
+            // get diff between file (filePath) and commit - send diff here.
+            repo.diff('', '', filePath, function(err, diffs) {
+                if (err) that.emitError(err);
+
+                fullDiff = diffs[0].diff;
+                fullDiff = fullDiff.replace('\n', '<br>');
+                // fullDiff = fullDiff.replace('+', '<br>+');
+                that.socket.emit('chapterSaved', { contents: newText, fullDiff: fullDiff });
+            });
         });
     });
 };

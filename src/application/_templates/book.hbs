@@ -41,6 +41,13 @@
 </div>
 <div class="col-lg-8 col-md-9 col-sm-9 col-xs-9">
     {{view Ember.TextArea valueBinding="controller.book.chapterContentNew"}}
+    <div class='live-diff pull-left'>
+        <h4 class='pull-left' >Live Diff</h4>
+        <a id='save-revision-link' class='pull-right' href='#' {{action saveRevision target="controller.book"}}>Save Revision</a>
+        <div class='clearfix'></div>
+        <hr>
+        <div id='diff'></div>
+    </div>
 </div>
 <div class="col-lg-4 col-md-3 col-sm-3 col-xs-3 sidebar">
     <div class="sidebar-chat">

@@ -54,6 +54,13 @@
             toggleChapter: function () {
                 this.set('chaptersOpen', !this.get('chaptersOpen'));
             },
+            saveRevision: function() {
+                var data = {
+                    message: 'this is my commit message',
+                    bookId: this.get('id')
+                };
+                TandemApp.get('socket').emit('saveChapter', data);
+            },
             deleteBook: function() {
                 var response = confirm('Are you sure you want to delete ' + this.title + '?');
                 //Bryce wants it to be _id because he is lazy and that is how it is written on his end
