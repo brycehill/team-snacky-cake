@@ -263,7 +263,7 @@ SocketEvents.prototype.addChapter = function(data) {
                             title: title,
                             idx: idx
                         });
-                        this.socket.broadcast.to(data._id)
+                        // this.socket.broadcast.to(data._id)
                     });
                 });
             });
