@@ -71,9 +71,12 @@ SocketEvents.prototype.addBook = function(data) {
                         });
                     });
                 });
+<<<<<<< HEAD
                 // 
                 // save to github repo
                 // console.log(that.user);
+=======
+>>>>>>> emitting all commits for a book
 
                 Author.findOne({username: username}, function (err, author) {
                     if (err) return that.emitError(err);
@@ -203,7 +206,7 @@ SocketEvents.prototype.saveChapter = function(data) {
         repo = git(book.path);
 
         file = book.path + '/' + book.chapters[i];
-        // Add only this chapter file. 
+        // Add only this chapter file.
         repo.add(file, function(err) {
             if (err) return self.emitError(err);
 
@@ -218,6 +221,28 @@ SocketEvents.prototype.saveChapter = function(data) {
         });
     });
 };
+
+SocketEvents.prototype.getCommits = function(data) {
+    var that = this,
+        bookId = new ObjectId(data.bookId),
+        repo;
+
+    Book.findOne({ _id: bookId }, function(err, book) {
+        if (err) return self.emitError(err);
+
+        repo = git(book.path);
+        repo.commits(function (err, commits) {
+            if (err) return self.emitError(err);
+
+            that.socket.emit('bookCommits', {
+                data: commits
+            });
+
+        });
+
+
+    });
+}
 
 SocketEvents.prototype.addChapter = function(data) {
     var that = this,
@@ -271,7 +296,7 @@ SocketEvents.prototype.addChapter = function(data) {
     });
 };
 
-// called when an author is in a 'book' room. 
+// called when an author is in a 'book' room.
 SocketEvents.prototype.joinRoom = function(data) {
     var self = this,
         room = data._id;
@@ -302,7 +327,7 @@ SocketEvents.prototype.getChapter = function(data) {
     });
 };
 
-// apply the patch to the file. 
+// apply the patch to the file.
 SocketEvents.prototype.updateChapter = function(data) {
     var bookId = new ObjectId(data._id),
         i = data.idx,
@@ -364,11 +389,6 @@ console.log(self.allClients);
             });
         });
     }
-};
-
-
-SocketEvents.prototype.getCommits = function(data) {
-
 };
 
 var stripSpaces = function(str) {
