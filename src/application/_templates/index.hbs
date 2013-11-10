@@ -72,3 +72,28 @@
 		{{/each}}
 	</ul>
 </div>
+
+{{#if controller.books.commitLog}}
+	<div class="backdrop" {{action closeUp target="TandemApp.author"}}></div>
+	<div id="revisions_list">
+		<h1>Revisions</h1>
+		<div class="scrollie">
+	        <table cellspacing="0" cellpadding="0" border="0">
+	        {{#each something}}
+	            <tr>
+	            	<td>date</td>
+	            	<td>time</td>
+	                <td><div style="width:255px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">
+	                    <a href="javascript:;" {{action editChapter target="chapter"}} {{bindAttr title='chapter.title'}}>
+	                        commit message
+	                    </a>
+	                </div></td>
+	            </tr>
+	        {{/each}}
+	        </table>
+			{{#each something}}
+
+			{{/each}}
+		</div>
+	</div>
+{{/if}}

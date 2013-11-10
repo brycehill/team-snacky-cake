@@ -1,6 +1,7 @@
 TandemApplication.reopen({
     BookController: Ember.ArrayController.extend({
         content: [],
+        commitLog: false,
         intervalID: false,
         init: function() {
             var that = this;
