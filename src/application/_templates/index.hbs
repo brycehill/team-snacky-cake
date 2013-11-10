@@ -29,8 +29,8 @@
 
 					<ul class='hardcover_front'>
 						<li>
-							<div class="coverDesign blue">
-								<span class="ribbon">NEW</span>
+							<div class="coverDesign" {{bindAttr style="book.background"}}>
+								<span class="ribbon" style="display:none;">NEW</span>
 								<h1>{{book.displayShortTitle}}</h1>
 								<p>{{book.owner}}</p>
 							</div>
