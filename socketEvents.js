@@ -213,7 +213,13 @@ SocketEvents.prototype.saveChapter = function(data) {
                 if (err) return self.emitError(err);
 
                 // What to send back here?
-                self.socket.emit('chapterCommit', {success: true});
+                Author.find().where('books').in([bookId]).exec(function(err, authors) {
+                    if (err) self.emitError(err);
+
+                    authors.forEach(function(author) {
+                        updateOtherUser(author.username, 'chapterCommit', {success: true});
+                    });
+                });
             });
         });
     });
@@ -304,12 +310,17 @@ SocketEvents.prototype.addChapter = function(data) {
                     book.save(function (err, book) {
                         if (err) return that.emitError(err);
 
-                        that.socket.emit('chapterCreated', {
-                            _id: book._id,
-                            title: title,
-                            idx: idx
+                        Author.find().where('books').in([bookId]).exec(function(err, authors) {
+                            if (err) self.emitError(err);
+
+                            authors.forEach(function(author) {
+                                updateOtherUser(author.username, 'chapterCreated', {
+                                    _id: book._id,
+                                    title: title,
+                                    idx: idx
+                                });
+                            });
                         });
-                        // this.socket.broadcast.to(data._id)
                     });
                 });
             });
