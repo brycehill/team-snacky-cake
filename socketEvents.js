@@ -10,8 +10,10 @@ var Book = require('./models/Book'),
     ObjectId = mongoose.Types.ObjectId,
     diff_patch_match = require('./diff_patch_match');
 
-function SocketEvents(socket) {
+function SocketEvents(socket, allClients) {
     this.socket = socket;
+    this.allClients = allClients;
+
     if (this.socket.user !== undefined) {
         this.user = socket.user;
     }
@@ -261,6 +263,7 @@ SocketEvents.prototype.addChapter = function(data) {
                             title: title,
                             idx: idx
                         });
+                        this.socket.broadcast.to(data._id)
                     });
                 });
             });
@@ -346,11 +349,12 @@ SocketEvents.prototype.addCoAuthor = function(data) {
         Author.findOne({ username: data.coAuthor}, function(err, author) {
             if (err) return self.emitError(err);
 
-            if (author == null) return self.emitError(null, {message: 'That username does not exist. Please Try Again.' });
+            if (author == null) return self.emitError(null, {message: 'That author is not yet using Tandem :(' });
 
             // found a user, add the book Id to them.
             author.books.push(bookId);
             author.save();
+            // self.joinRoom(data._id);
         });
     }
 };

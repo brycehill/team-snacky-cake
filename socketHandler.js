@@ -15,17 +15,14 @@ module.exports.init = function(socket) {
     // Gets a book (repo) and sends it back.
     socket.on('getBook', s.getBook.bind(s));
     socket.on('getAllBooks', s.getAllBooks.bind(s));
-    // Save the file the user is working on. 
-    socket.on('autoSave', function(data) {
-        var blob = data.blob;
-    });
-
     // Creates a new chapter, essentially a directory with a new file in it. 
     socket.on('addChapter', s.addChapter.bind(s));
     socket.on('getChapter', s.getChapter.bind(s));
+    // Saves the File on disk. 
     socket.on('updateChapter', s.updateChapter.bind(s));
     // Save a chapter - Commit!
     socket.on('saveChapter', s.saveChapter.bind(s));
+    socket.on('joinRoom', s.joinRoom.bind(s));
 
     socket.on('addCoAuthor', s.addCoAuthor.bind(s));
 };

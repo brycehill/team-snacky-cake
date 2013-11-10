@@ -103,10 +103,19 @@ io.set('authorization', function (data, accept) {
     }
 });
 
+allClients = {};
 
 io.sockets.on('connection', function(socket) {
     socket.user = socket.handshake.session.passport.user;
-    socketHandler.init(socket);
+
+    allClients[socket.user.username] = socket;
+
+    socketHandler.init(socket, allClients);
+
+    socket.on('disconnect', function(socket) {
+        delete allClients[socket.user.username];
+    });
+
     console.log('A socket with sessionID ' + socket.handshake.sessionID + ' connected!');
 });
 
