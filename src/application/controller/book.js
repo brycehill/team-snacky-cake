@@ -69,7 +69,9 @@ TandemApplication.reopen({
             	});
             	that.set('book.allAuthors', a);
             });
-
+            TandemApp.get('socket').on('coAuthorAdded', function(data) {
+            	that.get('book.allAuthors').pushObject(data.username);
+            })
             TandemApp.get('socket').on('chapterSaved', function(data) {
                 var diff = data.fullDiff,
                     $diff = $('#diff');

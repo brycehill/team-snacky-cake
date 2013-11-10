@@ -440,6 +440,7 @@ SocketEvents.prototype.addCoAuthor = function(data) {
                 // updating co author's book view
                 updateOtherUser(coAuthor, 'bookAdded', b);
             });
+            self.socket.emit('coAuthorAdded', {username: coAuthor});
         });
     }
 };
