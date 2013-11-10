@@ -80,7 +80,8 @@ SocketEvents.prototype.addBook = function(data) {
 };
 
 SocketEvents.prototype.deleteBook = function(data) {
-    var bookId = new ObjectId(data._id);
+    var bookId = new ObjectId(data._id),
+        self = this;
 
     Author.find().where('books').in([bookId]).exec(function(err, authors) {
         if (err) console.error(err);
@@ -102,6 +103,8 @@ SocketEvents.prototype.deleteBook = function(data) {
 
         Book.remove({ _id: bookId }, function (err) {
             if (err) console.log(err);
+
+            self.socket.emit('bookDeleted', { message: true });
         });
     });
 };
