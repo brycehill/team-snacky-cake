@@ -79,32 +79,35 @@ SocketEvents.prototype.addBook = function(data) {
 SocketEvents.prototype.getBook = function(data) {
     var self = this,
         username = this.user.username,
-        title = stripSpaces(data.title),
+        // title = stripSpaces(data.title),
+        id = data._id,
         repo, p, chapters;
 
     if (!username) throw new Error('No username provided');
 
-    p = path.join('/repos', username, title);
+    // p = path.join('/repos', username, title);
     // What information about the repo do we want?
     // Commits?
-    repo = git(p);
-    repo.tree().trees(function(err, sub) {
-        if (err) throw err;
-        // map over this to get stuff?
-        chapters = sub.map(function(dir) {
-            return dir.name;
-        });
+//     repo = git(p);
+//     repo.tree().blobs(function(err, f) {
+//         if (err) throw err;
+//         // map over this to get stuff?
+//         files = f.map(function(file) {
+//             console.log('found file: ');
+//             console.log(file);
+//             return file.name;
+//         });
 
-        repo.chapters = chapters;
+//         repo.chapters = files;
 
-        Book.find({ title: title }, function(err, book) {
+        Book.findOne({ _id: id }, function(err, book) {
             if (err) throw err;
-
-            // socket.book = book;
-            book = extend(repo, book);
-            self.sockets.emit('viewBook', book);
+// console.log('book');
+// console.log(book);
+            // book = extend(repo, book);
+            self.socket.emit('viewBook', book);
         });
-    });
+    // });
 };
 
 SocketEvents.prototype.getAllBooks = function(data) {
