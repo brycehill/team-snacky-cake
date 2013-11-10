@@ -2,7 +2,7 @@ var SocketEvents = require('./socketEvents');
 
 module.exports.init = function(socket) {
 
-    console.log('Init Sockets');
+    // console.log('Init Sockets');
 
     var s = new SocketEvents(socket);
     // @TODO figure out how to handle multiple users on a socket. 

@@ -4,10 +4,7 @@ var mongoose = require('mongoose'),
 
 var Book = new Schema({
     title: String,
-    owner: {
-        type: Schema.Types.ObjectId,
-        ref: 'Author'
-    },
+    owner: String,
     path: String
 });
 

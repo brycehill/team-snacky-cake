@@ -9,8 +9,6 @@ var Book = require('./models/Book'),
     ObjectId = mongoose.Types.ObjectId;
 
 function SocketEvents(socket) {
-    console.log('construct SE');
-    // console.log(socket);
     this.socket = socket;
     if (this.socket.user !== undefined) {
         this.user = socket.user;
@@ -58,7 +56,7 @@ SocketEvents.prototype.addBook = function(data) {
                     var book = new Book(
                         {
                             title: title,
-                            owner: author,
+                            owner: author.username,
                             path: path
                         }
                     );
@@ -118,13 +116,10 @@ SocketEvents.prototype.getAllBooks = function(data) {
     .exec(function (err, author) {
         if (err) throw err;
 
-        console.log(author);
-
-        books = author.books;
+        var books = author.books;
 
         that.socket.emit('foundBooks', books);
     });
-
 };
 
 SocketEvents.prototype.saveBook = function(data) {
