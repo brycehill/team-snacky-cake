@@ -8,8 +8,8 @@ TandemApplication.reopen({
 			return title;
 		}.property('title'),
 		background: function() {
-			var color = this.get('color') || '69BFAF';
-			return 'background-color:#' + color;
+			var color = this.get('color') || '#69BFAF';
+			return 'background-color:' + color;
 		}.property('background')
 	})
 });
