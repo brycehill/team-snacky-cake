@@ -11,6 +11,9 @@ TandemApplication.reopen({
                     that.addBook(book);
                 });
             });
+            TandemApp.get('socket').on('bookAdded', function(book) {
+                 that.addBook(book);
+            });
             TandemApp.get('socket').on('bookCommits', function(commitData) {
                 commitData.data.commits.forEach(function (commit) {
                     commit.shortid = commit.id.substr(0, 4) + '...';

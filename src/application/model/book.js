@@ -7,6 +7,25 @@
             chapterContentOld: '',
             chapterContentNew: 'Loading...',
             chapterObjects: null,
+            chatMessages: [],
+            sendChatMessage: function () {
+                if (this.get('chatMessage').trim().length === 0) {
+                    return;
+                }
+                Ember.run.begin();
+                TandemApp.get('socket').emit('bookChatMessage', {
+                    bookId: this.get('id'),
+                    message: this.get('chatMessage')
+                });
+                this.get('chatMessages').pushObject(Ember.Object.create({
+                    userName: 'Rodil',
+                    message: this.get('chatMessage')
+                }));
+                this.set('chatMessage', '');
+                Ember.run.end();
+                var scrollie = $('.chatMessages');
+                scrollie.scrollTop(scrollie[0].scrollHeight);
+            },
             init: function () {
                 var that = this;
                 this.set('chapterObjects', Ember.ArrayController.create({

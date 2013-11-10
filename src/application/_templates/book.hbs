@@ -44,18 +44,33 @@
 </div>
 <div class="col-lg-4 col-md-3 col-sm-3 col-xs-3 sidebar">
     <div class="sidebar-chat">
-        
+        <h4>Book Chat</h4>
+
+        <div class="chatMessages">
+            {{#each chat in controller.book.chatMessages}}
+                {{chat.userName}} > {{chat.message}}<br>
+            {{/each}}
+        </div>
+
+
+        <form {{action sendChatMessage target="controller.book" on="submit"}}>
+            <div class="input-group">
+                {{input value=controller.book.chatMessage type="text" class='form-control' placeholder="Chat message..."}}
+                <span class="input-group-btn">
+                    <button id="ChatFieldBtn" class='btn btn-default' type='submit'>Send</button>
+                </span>
+            </div>
+        </form>
     </div>
     <div class="sidebar-form">
         <h4>Current Co-Authors</h4>
-        <hr />
         <form {{action addCoAuthor on="submit"}}>
             <div class="input-group">
                 {{input value=controller.newCoAuthor type="text" class='form-control' placeholder="New Co-Author"}}
                 <span class="input-group-btn">
                     <button id="addChapter" class='btn btn-default' type='submit'>Add</button>
                 </span>
-            <div class="input-group">
+            </div>
         </form>
     </div>
 </div>
