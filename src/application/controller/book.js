@@ -6,15 +6,11 @@ TandemApplication.reopen({
    			TandemApp.get('socket').emit('getAllBooks');
    			TandemApp.get('socket').on('foundBooks', function(books) {
    				books.forEach(function(book) {
-                  book.id = book._id;
-                  delete book._id;
-                  that.get('content').pushObject(TandemApp.BookModel.create(book));
+                  that.addBook(book);
    				})
    			}),
    			TandemApp.get('socket').on('bookAdded', function(book) {
-   				book.id = book._id;
-                delete book._id;
-            	that.get('content').pushObject(TandemApp.BookModel.create(book));
+   				that.addBook(book);
             }),
             TandemApp.get('socket').on('bookDeleted', function(res) {
             	if (res._id !== '') {
@@ -24,6 +20,11 @@ TandemApplication.reopen({
 	            	}
             	}
             })
+   		},
+   		addBook: function(book) {
+   			book.id = book._id;
+            delete book._id;
+            this.get('content').pushObject(TandemApp.BookModel.create(book));
    		}
    	})
 });
