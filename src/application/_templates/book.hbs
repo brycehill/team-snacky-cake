@@ -2,9 +2,17 @@
 <a href="#/">Book List</a> | {{controller.book.title}}
 <br><br>
 
-<div id="chapterlist">
-    <div class="tabbie">
-        chapterlist
+<div id="chapterlist" {{bindAttr class="controller.book.chaptersOpen:chaptersOpen:chaptersClose"}}>
+    <div class="scrollingchapters">
+        Chapter 1<br>
+        Chapter 2<br>
+    </div>
+    <div class="holder">
+        <div class="tabbie">
+            <div {{action toggleChapter target="controller.book"}}>
+                chapterlist
+            </div>
+        </div>
     </div>
 </div>
 
