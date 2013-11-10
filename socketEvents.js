@@ -1,5 +1,5 @@
 var Book = require('./models/Book'),
-    Author = require('./models/Author')
+    Author = require('./models/Author'),
     extend = require('util-extend'),
     git = require('gift'),
     fs = require('fs'),
@@ -7,7 +7,9 @@ var Book = require('./models/Book'),
     path = require('path'),
     exec = require('child_process').exec,
     mongoose = require('mongoose'),
-    ObjectId = mongoose.Types.ObjectId;
+    request = require('request'),
+    ObjectId = mongoose.Types.ObjectId,
+    diff_patch_match = require('./diff_patch_match');
 
 function SocketEvents(socket) {
     this.socket = socket;
@@ -68,6 +70,15 @@ SocketEvents.prototype.addBook = function(data) {
                         });
                     });
                 });
+                // 
+                // save to github repo
+                console.log(that.user);
+                var res = request.post('https://api.github.com/user/repos', { form: {
+                    name: 'tandem_' + title,
+                    description: 'This repo was created by Tandem and used for collaborative writing.'
+                }});
+
+                console.log(res);
 
                 Author.findOne({username: username}, function (err, author) {
                     if (err) return that.emitError(err);
@@ -169,7 +180,7 @@ SocketEvents.prototype.getBook = function(data) {
     // });
 };
 
-SocketEvents.prototype.getAllBooks = function(data) {
+SocketEvents.prototype.getAllBooks = function() {
     var username = this.user.username,
         that = this;
 
@@ -274,7 +285,7 @@ SocketEvents.prototype.updateChapter = function(data) {
         i = data.idx,
         diff = data.diff,
         that = this,
-        repo;
+        repo, dmp, patches, res, ws;
 
     // diff to object
     Book.findOne({ _id: bookId }, function(err, book) {
@@ -282,14 +293,46 @@ SocketEvents.prototype.updateChapter = function(data) {
 
         repo = git(book.path);
 
+        var filePath = book.path + '/' + book.chapters[i].fileName;
+
         // get contents of file.
-        fs.readFile(book.path + '/' + book.chapters[i].fileName, 'utf8', function(err, contents) {
+        fs.readFile(filePath, 'utf8', function(err, origContents) {
             if (err) return that.emitError(err);
 
-            that.socket.emit('viewChapter', { contents: contents });
+            dmp = new diff_patch_match();
+            patches = dmp.patch_fromText(diff);
+            res = dmp.patch_apply(patches, origContents);
+
+            if (res[1]) {
+                newText = res[0];
+            }
+
+            ws = fs.createWriteStream(filePath);
+            ws.write(newText);
+
+            that.socket.emit('chapterSaved', { contents: newText });
         });
     });
+};
 
+
+SocketEvents.prototype.addCoAuthor = function(data) {
+    var bookId = new ObjectId(data._id),
+        coAuthor = data.coAuthor,
+        self = this;
+
+    if (coAuthor) {
+        // Search Github for username instead??
+        Author.findOne({ username: data.coAuthor}, function(err, author) {
+            if (err) return self.emitError(err);
+
+            if (author == null) return self.emitError(null, {message: 'That username does not exist. Please Try Again.' });
+
+            // found a user, add the book Id to them.
+            author.books.push(bookId);
+            author.save();
+        });
+    }
 };
 
 var stripSpaces = function(str) {

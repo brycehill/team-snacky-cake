@@ -26,4 +26,5 @@ module.exports.init = function(socket) {
     socket.on('addChapter', s.addChapter.bind(s));
     socket.on('getChapter', s.getChapter.bind(s));
     socket.on('updateChapter', s.updateChapter.bind(s));
+    socket.on('addCoAuthor', s.addCoAuthor.bind(s));
 };
