@@ -72,10 +72,6 @@ SocketEvents.prototype.addBook = function(data) {
                 // 
                 // save to github repo
                 console.log(that.user);
-                var res = request.post('https://api.github.com/user/repos', { form: {
-                    name: 'tandem_' + title,
-                    description: 'This repo was created by Tandem and used for collaborative writing.'
-                }});
 
                 console.log(res);
 
