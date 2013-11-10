@@ -4,6 +4,8 @@
         promises = [],
         listenerAdded = false,
         Model = Ember.Object.extend({
+            chapterContentOld: '',
+            chapterContentNew: 'Loading...',
             init: function () {
                 cache.push(this);
                 return this._super();
@@ -30,6 +32,13 @@
             	if (response) {
             		TandemApp.get('socket').emit('deleteBook', data);
             	}
+            },
+            startEditingChapter: function (idx) {
+                TandemApp.get('socket').emit('getChapter', {
+                    _id: this.get('id'),
+                    idx: idx
+                });
+                this.set('currentChapter', idx);
             }
         });
 
