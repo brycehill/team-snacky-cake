@@ -1,6 +1,5 @@
 var Book = require('./models/Book'),
-    Author = require('./models/Author'),
-    Chapter = require('./models/Chapter'),
+    Author = require('./models/Author')
     extend = require('util-extend'),
     git = require('gift'),
     fs = require('fs'),
@@ -143,7 +142,7 @@ SocketEvents.prototype.addChapter = function(data) {
         bookId = new ObjectId(data.bookId),
         number = data.number,
         title = data.title,
-        fileName = stripSpaces(title);
+        fileName = stripSpaces(title) + '.txt';
 
     if (!username) throw new Error('No username provided');
 
@@ -167,18 +166,17 @@ SocketEvents.prototype.addChapter = function(data) {
                     }, function(err) {
                         if (err) throw err;
 
-                        var chapter = new Chapter(
-                            {
-                                title: data.title,
-                                number: data.number,
-                                book: book
-                            }
-                        );
+                        if (book.chapters === undefined) book.chapters = [];
 
-                        chapter.save(function (err, c) {
+                        book.chapters.push({
+                            title: title,
+                            number: number
+                        });
+
+                        book.save(function (err, book) {
                             if (err) throw err;
 
-                            that.socket.emit('chapterCreate', {message: 'success'});
+                            that.socket.emit('chapterCreate', book);
                         });
                     });
                 });
