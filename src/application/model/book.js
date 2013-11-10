@@ -12,19 +12,11 @@
                 if (this.get('chatMessage').trim().length === 0) {
                     return;
                 }
-                Ember.run.begin();
                 TandemApp.get('socket').emit('bookChatMessage', {
                     bookId: this.get('id'),
                     message: this.get('chatMessage')
                 });
-                this.get('chatMessages').pushObject(Ember.Object.create({
-                    userName: 'Rodil',
-                    message: this.get('chatMessage')
-                }));
                 this.set('chatMessage', '');
-                Ember.run.end();
-                var scrollie = $('.chatMessages');
-                scrollie.scrollTop(scrollie[0].scrollHeight);
             },
             init: function () {
                 var that = this;
@@ -101,7 +93,27 @@
             },
             getAllAuthors: function() {
             	return this.get('allAuthors');
-            }.property('allAuthors')
+            }.property('allAuthors'),
+            allAuthorsMonkey: function () {
+                var authors = [],
+                    chatUsers = this.get('chatUsers'),
+                    allAuthors = this.get('allAuthors');
+
+                if (allAuthors) {
+                    allAuthors.forEach(function (author) {
+                        authors.push(Ember.Object.create({
+                            name: author,
+                            present: chatUsers.indexOf(author) !== -1
+                        }));
+                    });
+                }
+                return authors;
+
+            }.property('allAuthors.@each', 'chatUsers.@each'),
+            leaveRoom: function () {
+                TandemApp.get('socket').emit('leaveBookRoom', {bookId: this.get('id')});
+                top.location.href = '/app/#/';
+            }
         });
 
 

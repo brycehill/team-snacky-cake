@@ -6,13 +6,36 @@ TandemApplication.reopen({
         init: function() {
             var that = this;
             TandemApp.get('socket').emit('getAllBooks');
+            TandemApp.get('socket').on('userList', function (users) {
+                that.set('book.chatUsers', users);
+            });
             TandemApp.get('socket').on('foundBooks', function(books) {
                 books.forEach(function(book) {
-                    that.addBook(book);
+                    if (that.get('content').filterProperty('id', book._id).length === 0) {
+                        that.addBook(book);
+                    }
                 });
             });
             TandemApp.get('socket').on('bookAdded', function(book) {
                  that.addBook(book);
+            });
+            TandemApp.get('socket').on('bookChatMessage', function(msg) {
+                Ember.run.begin();
+                that.get('book.chatMessages').pushObject(Ember.Object.create({
+                    userName: msg.user || 'Me',
+                    message: msg.message
+                }));
+                Ember.run.end();
+
+                if (msg.action === 'join') {
+                    that.get('book.chatUsers').pushObject(msg.who);
+                }
+                if (msg.action === 'leave') {
+                    that.get('book.chatUsers').removeObject(msg.who);
+                }
+
+                var scrollie = $('.chatMessages');
+                scrollie.scrollTop(scrollie[0].scrollHeight);
             });
             TandemApp.get('socket').on('bookCommits', function(commitData) {
                 commitData.data.commits.forEach(function (commit) {

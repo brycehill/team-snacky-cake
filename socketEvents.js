@@ -14,6 +14,7 @@ var Book = require('./models/Book'),
 function SocketEvents(socket, allClients) {
     this.socket = socket;
     this.allClients = allClients;
+    this.allClients.tandemBookRooms = this.allClients.bookRooms || {};
 
     if (this.socket.user !== undefined) {
         this.user = socket.user;
@@ -40,7 +41,11 @@ SocketEvents.prototype.receiveBookChatMessage = function (data) {
     Author.find().where('books').in([data.bookId]).exec(function(err, authors) {
         if (err) that.emitError(err);
 
-        that.socket.broadcast.to(data.bookId).emit('function', {message:data.message});
+        that.socket.broadcast.to(data.bookId).emit('bookChatMessage', {
+            user: that.user.username,
+            message:data.message
+        });
+        that.socket.emit('bookChatMessage', {message:data.message});
 
     });
 
@@ -348,9 +353,42 @@ SocketEvents.prototype.addChapter = function(data) {
 // called when an author is in a 'book' room.
 SocketEvents.prototype.joinRoom = function(data) {
     var self = this,
-        room = data._id;
+        room = data.bookId;
+
+    this.allClients.tandemBookRooms[room] = this.allClients.tandemBookRooms[room] || [];
+    this.allClients.tandemBookRooms[room].push(this.user.username);
+
+    this.socket.broadcast.to(room).emit('bookChatMessage', {
+        user: 'Tandem',
+        message: this.user.username + ' joined',
+        action: 'join',
+        who: this.user.username
+    });
+
+    this.socket.emit('userList', this.allClients.tandemBookRooms[room]);
 
     self.socket.join(room);
+};
+
+// called when an author is in a 'book' room.
+SocketEvents.prototype.leaveRoom = function(data) {
+    var self = this,
+        room = data.bookId;
+
+    if (this.allClients.tandemBookRooms[room]) {
+        var idx = this.allClients.tandemBookRooms[room].indexOf(this.user.username);
+        this.allClients.tandemBookRooms[room].splice(idx, 1);
+    }
+
+
+    this.socket.broadcast.to(room).emit('bookChatMessage', {
+        user: 'Tandem',
+        message: this.user.username + ' left',
+        action: 'leave',
+        who: this.user.username
+    });
+
+    self.socket.leave(room);
 };
 
 

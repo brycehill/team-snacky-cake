@@ -35,5 +35,6 @@ module.exports.init = function(socket, allClients) {
 
     // chatz yo!
     socket.on('joinBookRoom', s.joinRoom.bind(s));
+    socket.on('leaveBookRoom', s.leaveRoom.bind(s));
     socket.on('bookChatMessage', s.receiveBookChatMessage.bind(s));
 };

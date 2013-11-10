@@ -1,5 +1,5 @@
 <br>
-<a href="#/">Book List</a> | {{controller.book.title}} ... {{controller.book.currentChapterName}}
+<a href="javascript:;" {{action leaveRoom target="controller.book"}}>Book List</a> | {{controller.book.title}} ... {{controller.book.currentChapterName}}
 <br><br>
 
 
@@ -74,8 +74,12 @@
         <h4>Current Authors</h4>
         <div class="allAuthors">
             <ul>
-            {{#each author in controller.book.allAuthors}}
-                <li>{{author}}</li>
+            {{#each author in controller.book.allAuthorsMonkey}}
+                {{#if author.present}}
+                <li><b>{{author.name}}</b></li>
+                {{else}}
+                <li>{{author.name}}</li>
+                {{/if}}
             {{/each}}
             </ul>
         </div>

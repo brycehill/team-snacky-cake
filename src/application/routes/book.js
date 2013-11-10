@@ -2,6 +2,7 @@ TandemApplication.reopen({
     BookRoute: Ember.Route.extend({
         setupController: function (controller, model) {
             model.set('chaptersOpen', false);
+            model.set('chatMessages', []);
             model.startEditingChapterByIndex(0);
             controller.set('book', model);
             var hasBook = false;
@@ -14,6 +15,7 @@ TandemApplication.reopen({
                 controller.get('content').pushObject(model);
             }
 
+            TandemApp.get('socket').emit('joinBookRoom', {bookId: model.get('id')});
             TandemApp.get('socket').emit('gimmeYerAuthors', {id: model.get('id')});
         }
     })
