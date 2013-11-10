@@ -21,6 +21,15 @@
             }.property('background'),
             toggleChapter: function () {
                 this.set('chaptersOpen', !this.get('chaptersOpen'));
+            },
+            deleteBook: function() {
+            	var response = confirm('Are you sure you want to delete ' + this.title + '?');
+            	//Bryce wants it to be _id because he is lazy and that is how it is written on his end
+            	var data = {}
+            	data._id = this.get('id');
+            	if (response) {
+            		TandemApp.get('socket').emit('deleteBook', data);
+            	}
             }
         });
 
