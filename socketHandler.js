@@ -24,4 +24,5 @@ module.exports.init = function(socket) {
 
     // Creates a new chapter, essentially a directory with a new file in it. 
     socket.on('addChapter', s.addChapter.bind(s));
+    socket.on('getChapter', s.getChapter.bind(s));
 };

@@ -257,10 +257,10 @@ SocketEvents.prototype.getChapter = function(data) {
         console.log(book.chapters[i]);
 
         // get contents of file.
-        fs.readFile(book.path + '/' + book.chapters[i].fileName, function(err, contents) {
+        fs.readFile(book.path + '/' + book.chapters[i].fileName, 'utf8', function(err, contents) {
             if (err) that.emitError(err);
-            console.log(contents);
-            that.socket.emit('viewChapter', contents);
+
+            that.socket.emit('viewChapter', { contents: contents });
 
         });
     });
