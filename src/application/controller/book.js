@@ -90,7 +90,9 @@ TandemApplication.reopen({
                     tmp = diff.split('<br>');
 
                     newDiff = tmp.map(function(line, i) {
-                        if (line.charAt() == '+') {
+                    	if (i < 3) {
+                    		return;
+                    	} else if (line.charAt() == '+') {
                             return '<span class=\'addition\'>'+line+'</span>';
                         } else if (line.charAt() == '-') {
                             return '<span class=\'subtraction\'>'+line+'</span>';
