@@ -1,7 +1,7 @@
 TandemApplication.reopen({
     BookController: Ember.ArrayController.extend({
         content: [],
-        commitLog: false,
+        commitLog: [],
         intervalID: false,
         init: function() {
             var that = this;
@@ -11,8 +11,11 @@ TandemApplication.reopen({
                     that.addBook(book);
                 });
             });
-            TandemApp.get('socket').on('bookAdded', function(book) {
-                that.addBook(book);
+            TandemApp.get('socket').on('bookCommits', function(commitData) {
+                commitData.data.commits.forEach(function (commit) {
+                    commit.shortid = commit.id.substr(0, 4) + '...';
+                });
+                that.set('commitLog', commitData.data.commits);
             });
             TandemApp.get('socket').on('bookDeleted', function(res) {
                 if (res._id !== '') {
@@ -76,6 +79,9 @@ TandemApplication.reopen({
             		coAuthor: this.get('newCoAuthor')
             	});
             	this.set('newCoAuthor', '');
+            },
+            closeRevisions: function () {
+                this.set('commitLog', []);
             }
         }
     })
