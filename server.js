@@ -25,7 +25,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new GitHubStrategy({
         clientID: '32a5a6f2539e177a2d34',
         clientSecret: 'b52a62cf75d3bd6371477315a0202a43e465c631',
-        callbackURL: "http://team-snacky-cake.2013.nodeknockout.com:8000/callback"
+        callbackURL: "http://team-snacky-cake.2013.nodeknockout.com/callback"
     },
     function(accessToken, refreshToken, profile, done) {
         return done(null, profile);
