@@ -98,9 +98,10 @@ TandemApplication.reopen({
             	that.set('book.allAuthors', a);
             });
             TandemApp.get('socket').on('coAuthorAdded', function(data) {
-            	var directions = ' <small>can now work on this book!</small><br /><small>They can now access this book from their home screen</small>';
-            	var user = data.username + directions
+            	var user = data.username;
             	that.get('book.allAuthors').pushObject(user);
+            	$('.allAuthors').append('<span id="instructions"><small>'+user+' can now work on this book!</small><br /><small>They can now access this book from their home screen</small></span>');
+            	setTimeout(function() {$('#instructions').fadeOut(function() {this.remove()})}, 5000);
             });
             TandemApp.get('socket').on('chapterSaved', function(data) {
                 var diff = data.fullDiff,
