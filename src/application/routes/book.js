@@ -5,8 +5,9 @@ TandemApplication.reopen({
             model.startEditingChapter(0);
             controller.set('book', model);
             var hasBook = false;
+            console.log('monkey');
             controller.get('content').forEach(function (book) {
-                if (book.get('id') === model.get('book')) {
+                if (book.get('id') === model.get('id')) {
                     hasBook = true;
                 }
             });
