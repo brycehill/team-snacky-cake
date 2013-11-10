@@ -8,10 +8,8 @@ TandemApplication.reopen({
 			return title;
 		}.property('title'),
 		background: function() {
-			colors = ['#A6592D', '#A64029', '#400101', '#A62929', '#57493E', '#E4DDBD', '#A6A38C', '#316481', '#437DA5'];
-			background = 'background-color:';
-			background += colors[Math.floor(Math.random() * colors.length)];
-			return background;
+			var color = this.get('color') || '69BFAF';
+			return 'background-color:#' + color;
 		}.property('background')
 	})
 });

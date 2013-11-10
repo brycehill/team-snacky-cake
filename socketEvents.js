@@ -19,6 +19,7 @@ SocketEvents.prototype.addBook = function(data) {
     var username = this.user.username,
         title = data.title,
         that = this,
+        colors = ['F2BBA7', '29698C', '64A562', '69BFAF', '0FA68A'],
         p;
 
     if (!username) throw new Error('No username provided');
@@ -57,7 +58,8 @@ SocketEvents.prototype.addBook = function(data) {
                         {
                             title: title,
                             owner: author.username,
-                            path: p
+                            path: p,
+                            color: colors[Math.floor(Math.random() * colors.length)]
                         }
                     );
 
