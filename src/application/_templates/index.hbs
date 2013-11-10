@@ -17,10 +17,52 @@
 
 <div class="bookList">
     <h3>Works in Progress:</h3>
-	{{#each book in controller.books.content}}
-        {{#linkTo 'book' book tagName='div' class='book col-lg-2 col-md-3 col-sm-4 col-xs-6' style=book.background}}
-			<p class="title">{{book.displayShortTitle}}</p>
-			<p class="author">{{book.owner}}</p>
-        {{/linkTo}}
-	{{/each}}
+    <ul class="align">
+		{{#each book in controller.books.content}}
+		    {{!-- {{#linkTo 'book' book tagName='div' class='book col-lg-2 col-md-3 col-sm-4 col-xs-6' style=book.background}}
+				<p class="title">{{book.displayShortTitle}}</p>
+				<p class="author">{{book.owner}}</p>
+		    {{/linkTo}} --}}
+		    <li>
+		    	<figure class='book'>
+					<!-- Front -->
+
+					<ul class='hardcover_front'>
+						<li>
+							<div class="coverDesign blue">
+								<span class="ribbon">NEW</span>
+								<h1>{{book.displayShortTitle}}</h1>
+								<p>{{book.owner}}</p>
+							</div>
+						</li>
+						<li></li>
+					</ul>
+
+					<!-- Pages -->
+
+					<ul class='page'>
+						<li></li>
+						<li>
+							<a class="btn" href="#">Download</a>
+						</li>
+						<li></li>
+						<li></li>
+						<li></li>
+					</ul>
+
+					<!-- Back -->
+
+					<ul class='hardcover_back'>
+						<li></li>
+						<li></li>
+					</ul>
+					<ul class='book_spine'>
+						<li></li>
+						<li></li>
+					</ul>
+				</figure>
+			</li>
+					
+		{{/each}}
+	</ul>
 </div>
