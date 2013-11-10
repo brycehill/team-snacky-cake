@@ -1,5 +1,4 @@
 
-
 <form {{action createBook on="submit"}}>
 	<div class="col-md-6 col-sm-6 col-xs-6 add-book-form">
 	    <div class="input-group">
@@ -11,12 +10,17 @@
 	</div>
 </form>
 
+
+
+
+
+
 <div class="bookList">
     <h3>Works in Progress:</h3>
 	{{#each book in controller.books.content}}
-		<div class="book col-lg-2 col-md-3 col-sm-4 col-xs-6" {{bindAttr style="book.color"}}>
+        {{#linkTo 'book' book tagName='div' class='book col-lg-2 col-md-3 col-sm-4 col-xs-6' style=book.background}}
 			<p class="title">{{book.displayShortTitle}}</p>
 			<p class="author">{{book.owner}}</p>
-		</div>
+        {{/linkTo}}
 	{{/each}}
 </div>

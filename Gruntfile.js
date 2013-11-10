@@ -29,7 +29,11 @@ module.exports = function (grunt) {
             compile: {
                 options: {
                     amd: false,
-                    templateBasePath: /src\/application\/_templates\//
+                    templateBasePath: /src\/application\/_templates\//,
+                    templateName: function(name) {
+                        console.log(name.replace('_', '/'));
+                        return name.replace('_', '/');
+                    }
                 },
                 files: {
                     '.tmp/templates.js': 'src/application/_templates/*.hbs'

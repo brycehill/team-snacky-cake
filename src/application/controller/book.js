@@ -6,7 +6,9 @@ TandemApplication.reopen({
    			TandemApp.get('socket').emit('getAllBooks');
    			TandemApp.get('socket').on('foundBooks', function(books) {
    				books.forEach(function(book) {
-   					that.get('content').pushObject(TandemApp.BookModel.create(book));
+                  book.id = book._id;
+                  delete book._id;
+                  that.get('content').pushObject(TandemApp.BookModel.create(book));
    				})
    			}),
    			TandemApp.get('socket').on('bookAdded', function(book) {
