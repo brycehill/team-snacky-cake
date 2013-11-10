@@ -205,6 +205,9 @@ SocketEvents.prototype.getAllBooks = function() {
 };
 
 SocketEvents.prototype.saveChapter = function(data) {
+console.log('Save Chapter!');
+console.log(data);
+
     var self = this,
         message = data.message,
         bookId = new ObjectId(data.bookId),
@@ -216,13 +219,15 @@ SocketEvents.prototype.saveChapter = function(data) {
 
         repo = git(book.path);
 
-        file = book.path + '/' + book.chapters[i];
+
+        file = book.path + '/' + book.chapters[i].fileName;
+
         // Add only this chapter file.
         repo.add(file, function(err) {
             if (err) return self.emitError(err);
 
             repo.commit(message, {
-                file: file
+                // file: file
             }, function(err) {
                 if (err) return self.emitError(err);
 
