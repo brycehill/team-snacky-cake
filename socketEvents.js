@@ -376,10 +376,8 @@ SocketEvents.prototype.addCoAuthor = function(data) {
 
             Book.findById(data._id, function(err, b) {
                 if (err) self.emitError(err);
-console.log('adding co author ALL CLIENTS');
-console.log(self.allClients);
                 // updating co author's book view
-                self.allClients[coAuthor].emit('bookAdded', b);
+                updateOtherUser(coAuthor, 'bookAdded', b);
             });
         });
     }
@@ -388,6 +386,13 @@ console.log(self.allClients);
 var stripSpaces = function(str) {
     return str.replace(/\s/g, '')
               .replace(/\W/g, '');
+};
+
+var updateOtherUser = function(user, func, data) {
+    var theirSocket = this.allClients[user];
+    if (theirSocket !== undefined && theirSocket !== null) {
+        theirSocket.emit(func, data);
+    }
 };
 
 module.exports = SocketEvents;
