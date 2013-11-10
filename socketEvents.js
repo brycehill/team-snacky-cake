@@ -16,6 +16,18 @@ function SocketEvents(socket) {
     }
 };
 
+SocketEvents.prototype.emitError = function(err, data) {
+    if (err) console.error(err);
+
+    if (data) {
+        data = {
+            message: data.message || 'Something bad happened. Please try again.'
+        };
+
+        this.socket.emit('error', { message: data.message });
+    }
+};
+
 SocketEvents.prototype.addBook = function(data) {
     var username = this.user.username,
         title = data.title,
@@ -24,37 +36,41 @@ SocketEvents.prototype.addBook = function(data) {
         colors = ['#F2BBA7', '#29698C', '#64A562', '#69BFAF', '#0FA68A', '#BBBBBB', '#F2C1F4'],
         p;
 
-    if (!username) throw new Error('No username provided');
+    if (!username) that.emitError(null, { message: 'No username provided' });
 
     p = path.join('/repos', username, stripSpaces(title));
     firstFile = path.join(p, fileName);
 
     fs.exists(p, function(exists) {
-        if (exists) throw new Error('Repo Exists for user ' + username);
+        if (exists) {
+            return that.emitError(null, {
+                message: 'Repo \'' + title + '\' already exists. Please try again.'
+            });
+        }
 
         mkdirp(p, function(err) {
-            if (err) throw err;
+            if (err) that.emitError(err);
 
             git.init(p, function (err, repo) {
-                if (err) throw err;
+                if (err) that.emitError(err);
 
                 // Create an intro file and make initial commit.
                 fs.writeFile(firstFile, 'Welcome to Tandem. Start writing!', function(err) {
-                    if (err) throw err;
+                    if (err) that.emitError();
 
                     repo.add(firstFile, function(err) {
-                        if (err) throw err;
+                        if (err) that.emitError(err);
 
                         repo.commit('Initial Commit', {
                             a: true
                         }, function(err) {
-                            if (err) throw err;
+                            if (err) that.emitError(err);
                         });
                     });
                 });
 
                 Author.findOne({username: username}, function (err, author) {
-                    if (err) throw err;
+                    if (err) that.emitError(err);
 
                     var book = new Book({
                         title: title,
@@ -69,10 +85,10 @@ SocketEvents.prototype.addBook = function(data) {
                     });
 
                     book.save(function (err, b) {
-                        if (err) throw err;
+                        if (err) that.emitError(err);
 
                         Author.update({username: username}, {$push: {books: b}}, function (err, numAffected, rawResponse) {
-                            if (err) throw err;
+                            if (err) that.emitError(err);
 
                             that.socket.emit('bookAdded', b);
                         });
@@ -88,7 +104,7 @@ SocketEvents.prototype.deleteBook = function(data) {
         self = this;
 
     Author.find().where('books').in([bookId]).exec(function(err, authors) {
-        if (err) console.error(err);
+        if (err) self.emitError(err);
 
         authors.forEach(function(author) {
             author.books.splice(author.books.indexOf(bookId),1);
@@ -96,7 +112,7 @@ SocketEvents.prototype.deleteBook = function(data) {
         });
 
         Book.findById(bookId, function(err, book) {
-            if (err) console.log(err);
+            if (err) self.emitError(err);
 
             if (book.path && book.path !== '/') {
                 // remove every file in the repo
@@ -106,9 +122,9 @@ SocketEvents.prototype.deleteBook = function(data) {
         });
 
         Book.remove({ _id: bookId }, function (err) {
-            if (err) console.log(err);
+            if (err) self.emitError(err);
 
-            self.socket.emit('bookDeleted', { message: true });
+            self.socket.emit('bookDeleted', { _id: data._id });
         });
     });
 };
@@ -120,7 +136,7 @@ SocketEvents.prototype.getBook = function(data) {
         id = data._id,
         repo, p, chapters;
 
-    if (!username) throw new Error('No username provided');
+    if (!username) that.emitError(null, { message: 'No username provided' });
 
     // p = path.join('/repos', username, title);
     // What information about the repo do we want?
@@ -138,7 +154,7 @@ SocketEvents.prototype.getBook = function(data) {
 //         repo.chapters = files;
 
         Book.findOne({ _id: id }, function(err, book) {
-            if (err) throw err;
+            if (err) self.emitError(err);
 // console.log('book');
 // console.log(book);
             // book = extend(repo, book);
@@ -154,7 +170,7 @@ SocketEvents.prototype.getAllBooks = function(data) {
     Author.findOne({ username: username })
     .populate('books')
     .exec(function (err, author) {
-        if (err) throw err;
+        if (err) that.emitError(err);
 
         var books = author.books;
 
@@ -170,7 +186,7 @@ SocketEvents.prototype.saveBook = function(data) {
     repo = git(socket.book.path);
 
     repo.commit(message, function(err) {
-        if (err) throw err;
+        if (err) self.emitError(err);
 
         self.socket.emit('bookSaved', {success: true});
     });
@@ -184,27 +200,27 @@ SocketEvents.prototype.addChapter = function(data) {
         title = data.title,
         fileName = stripSpaces(title) + '.txt';
 
-    if (!username) throw new Error('No username provided');
+    if (!username) that.emitError(null, { message: 'No username provided' });
 
     Book.findOne({_id: bookId}, function (err, book) {
-        if (err) throw new Error('Book could not be located');
+        if (err) that.emitError(err, { message: 'Book could not be located' });
 
         repo = git(book.path);
         filepath = path.join(book.path, fileName);
 
         fs.exists(book.path, function(exists) {
-            if (!exists) throw new Error('Book path does not exits');
+            if (!exists) that.emitError();
 
             fs.writeFile(filepath, 'Start writing chapter ' + title + ' now!', function(err) {
-                if (err) throw err;
+                if (err) that.emitError(err);
 
                 repo.add(fileName, function(err) {
-                    if (err) throw err;
+                    if (err) that.emitError(err);
 
                     repo.commit('Initial commit of new chapter: ' + title, {
                         a: false
                     }, function(err) {
-                        if (err) throw err;
+                        if (err) that.emitError(err);
 
                         if (book.chapters === undefined) book.chapters = [];
 
@@ -214,16 +230,40 @@ SocketEvents.prototype.addChapter = function(data) {
                         });
 
                         book.save(function (err, book) {
-                            if (err) throw err;
+                            if (err) that.emitError(err);
 
-                            that.socket.emit('chapterCreate', book);
+                            that.socket.emit('chapterCreated', book);
                         });
                     });
                 });
             });
         });
     });
+};
 
+// idx of chapter array, _id, get
+SocketEvents.prototype.getChapter = function(data) {
+    var username = this.user.username,
+        bookId = new ObjectId(data._id),
+        i = data.idx,
+        that = this,
+        repo;
+
+    Book.findOne({ _id: bookId }, function(err, book) {
+        if (err) that.emitError(err);
+
+        repo = git(book.path);
+
+        console.log(book.chapters[i]);
+
+        // get contents of file.
+        fs.readFile(book.path + '/' + book.chapters[i].fileName, function(err, contents) {
+            if (err) that.emitError(err);
+            console.log(contents);
+            that.socket.emit('viewChapter', contents);
+
+        });
+    });
 };
 
 var stripSpaces = function(str) {
