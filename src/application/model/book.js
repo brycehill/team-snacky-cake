@@ -55,13 +55,11 @@
                 this.set('chaptersOpen', !this.get('chaptersOpen'));
             },
             saveRevision: function() {
-                console.log('saving...');
                 var data = {
                     message: 'this is my commit message',
                     bookId: this.get('id'),
                     idx: this.get('currentChapter')
                 };
-                console.log(data);
                 TandemApp.get('socket').emit('saveChapter', data);
             },
             deleteBook: function() {

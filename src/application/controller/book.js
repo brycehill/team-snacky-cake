@@ -28,6 +28,12 @@ TandemApplication.reopen({
                     }
                 }
             });
+            TandemApp.get('socket').on('chapterCommit', function(data) {
+                console.log('saved!');
+                $('#diff').empty();
+                $('.live-diff .msg').text('Revision Successfully Made');
+
+            });
             TandemApp.get('socket').on('chapterCreated', function(chapter) {
                 that.get('content').forEach(function (book) {
                     if (book.get('id') === chapter._id) {
@@ -73,25 +79,28 @@ TandemApplication.reopen({
             	var directions = ' <small>can now work on this book!</small><br /><small>They can now access this book from their home screen</small>';
             	var user = data.username + directions
             	that.get('book.allAuthors').pushObject(user);
-            })
+            });
             TandemApp.get('socket').on('chapterSaved', function(data) {
                 var diff = data.fullDiff,
-                    $diff = $('#diff');
+                    $diff = $('#diff'),
+                    newDiff;
 
                 $diff.empty();
-                tmp = diff.split('<br>');
+                if (diff) {
+                    tmp = diff.split('<br>');
 
-                newDiff = tmp.map(function(line, i) {
-                    if (line.charAt() == '+') {
-                        return '<span class=\'addition\'>'+line+'</span>';
-                    } else if (line.charAt() == '-') {
-                        return '<span class=\'subtraction\'>'+line+'</span>';
-                    } else if (line == '\\ No newline at end of file') {
-                    	return;
-                    } else {
-                        return line;
-                    }
-                });
+                    newDiff = tmp.map(function(line, i) {
+                        if (line.charAt() == '+') {
+                            return '<span class=\'addition\'>'+line+'</span>';
+                        } else if (line.charAt() == '-') {
+                            return '<span class=\'subtraction\'>'+line+'</span>';
+                        } else if (line == '\\ No newline at end of file') {
+                        	return;
+                        } else {
+                            return line;
+                        }
+                    });
+                }
 
                 $diff.append(newDiff).scrollTop($diff[0].scrollHeight);
             });

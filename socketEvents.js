@@ -228,6 +228,7 @@ SocketEvents.prototype.saveChapter = function(data) {
             }, function(err) {
                 if (err) return self.emitError(err);
 
+                self.socket.emit('chapterCommit', { success: true });
                 // What to send back here?
                 Author.find().where('books').in([bookId]).exec(function(err, authors) {
                     if (err) self.emitError(err);
