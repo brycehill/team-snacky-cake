@@ -73,8 +73,6 @@ SocketEvents.prototype.addBook = function(data) {
                 // save to github repo
                 console.log(that.user);
 
-                console.log(res);
-
                 Author.findOne({username: username}, function (err, author) {
                     if (err) return that.emitError(err);
 
