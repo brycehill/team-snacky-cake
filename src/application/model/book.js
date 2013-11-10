@@ -39,7 +39,10 @@
                     idx: idx
                 });
                 this.set('currentChapter', idx);
-            }
+            },
+            isOwner: function(book) {
+	            return this.get('owner') === TandemApp.author.get('login');
+	        }.property('owner')
         });
 
 

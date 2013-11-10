@@ -32,7 +32,7 @@
 							<div class="coverDesign" {{bindAttr style="book.background"}}>
 								<span class="ribbon" style="display:none;">NEW</span>
 								<h1>{{book.displayShortTitle}}</h1>
-								<p>{{book.owner}}</p>
+								<p>by: {{book.owner}}</p>
 							</div>
 						</li>
 						<li></li>
@@ -46,7 +46,9 @@
 							{{#linkTo 'book' book class='btn'}}
 								Edit
 							{{/linkTo}}
-							<a class="btn" href="#" {{action deleteBook target="book"}}>Delete</a>
+							{{#if book.isOwner}}
+								<a class="btn" href="#" {{action deleteBook target="book"}}>Delete</a>
+							{{/if}}
 						</li>
 						<li></li>
 						<li></li>
