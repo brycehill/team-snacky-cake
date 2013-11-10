@@ -5,6 +5,7 @@ var Book = require('./models/Book'),
     git = require('gift'),
     fs = require('fs'),
     mkdirp = require('mkdirp'),
+    path = require('path'),
     mongoose = require('mongoose'),
     ObjectId = mongoose.Types.ObjectId;
 
@@ -19,20 +20,20 @@ SocketEvents.prototype.addBook = function(data) {
     var username = this.user.username,
         title = data.title,
         that = this,
-        path;
+        p;
 
     if (!username) throw new Error('No username provided');
 
-    path = '/repos/' + username + '/' + stripSpaces(title);
-    firstFile = path + '/intro.txt';
+    p = path.join('/repos', username, stripSpaces(title));
+    firstFile = path.join(p, 'intro.txt');
 
-    fs.exists(path, function(exists) {
+    fs.exists(p, function(exists) {
         if (exists) throw new Error('Repo Exists for user ' + username);
 
-        mkdirp(path, function(err) {
+        mkdirp(p, function(err) {
             if (err) throw err;
 
-            git.init(path, function (err, repo) {
+            git.init(p, function (err, repo) {
                 if (err) throw err;
 
                 // Create an intro file and make initial commit.
@@ -57,7 +58,7 @@ SocketEvents.prototype.addBook = function(data) {
                         {
                             title: title,
                             owner: author.username,
-                            path: path
+                            path: p
                         }
                     );
 
