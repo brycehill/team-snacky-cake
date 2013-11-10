@@ -241,12 +241,12 @@ SocketEvents.prototype.addChapter = function(data) {
             if (!exists) return that.emitError();
 
             ws = fs.createWriteStream(book.path + '/' + fileName);
-            ws.write('Start writing chapter \'' + title + '\' now!');
+            ws.write('Start writing here');
 
             repo.add(fileName, function(err) {
                 if (err) return that.emitError(err);
 
-                repo.commit('Initial commit of new chapter: ' + title, {
+                repo.commit('Initial commit of new chapter: ' + stripSpaces(title), {
                     a: false
                 }, function(err) {
                     if (err) return that.emitError(err);
@@ -274,6 +274,16 @@ SocketEvents.prototype.addChapter = function(data) {
         });
     });
 };
+
+// called when an author is in a 'book' room. 
+SocketEvents.prototype.joinRoom = function(data) {
+    var self = this,
+        room = data._id;
+
+    self.socket.join(room);
+};
+
+
 
 // idx of chapter array, _id, get
 SocketEvents.prototype.getChapter = function(data) {
