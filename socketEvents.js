@@ -7,7 +7,6 @@ var Book = require('./models/Book'),
     path = require('path'),
     exec = require('child_process').exec,
     mongoose = require('mongoose'),
-    request = require('request'),
     ObjectId = mongoose.Types.ObjectId,
     diff_patch_match = require('./diff_patch_match');
 

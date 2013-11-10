@@ -57,6 +57,13 @@ TandemApplication.reopen({
                     title: this.get('newChapterTitle')
                 });
                 this.set('newChapterTitle', '');
+            },
+            addCoAuthor: function() {
+            	TandemApp.get('socket').emit('addCoAuthor', {
+            		_id: this.get('book.id'),
+            		coAuthor: this.get('newCoAuthor')
+            	});
+            	this.set('newCoAuthor', '');
             }
         }
     })
