@@ -1,17 +1,20 @@
-Index Page
 
-<label for="bookName">Book Name</label>
-{{input value=bookName type="text" placeholder="Enter your book name"}}
-<button id="addBook" {{action 'createBook'}}>Create a new Book</button>
 
-<div class="bookContainer">
-	<h2>Books</h2>
-	<div class="bookList">
-		{{#each book in controller.books.content}}
-			<div class="book col-lg-2 col-md-3 col-sm-4 col-xs-6">
-				<p class="title">{{book.title}}</p>
-				<p class="author">{{book.owner}}</p>
-			</div>
-		{{/each}}
-	</div>
+<div class="col-md-6 col-sm-6 col-xs-6 add-book-form">
+    <div class="input-group">
+        {{input value=bookName type="text" class='form-control' placeholder="New Book Title"}}
+        <span class="input-group-btn">
+            <button id="addBook" class='btn btn-default' type='button' {{action 'createBook'}}>Create</button>
+        </span>
+    </div>
+</div>
+
+<div class="bookList">
+    <h3>Works in Progress:</h3>
+	{{#each book in controller.books.content}}
+		<div class="book col-lg-2 col-md-3 col-sm-4 col-xs-6">
+			<p class="title">{{book.title}}</p>
+			<p class="author">{{book.owner}}</p>
+		</div>
+	{{/each}}
 </div>
