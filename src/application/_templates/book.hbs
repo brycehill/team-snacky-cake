@@ -3,7 +3,6 @@
 <br><br>
 
 
-
 <div id="chapterlist" {{bindAttr class="controller.book.chaptersOpen:chaptersOpen:chaptersClose"}}>
     <form {{action createChapter on="submit"}} style="margin-top:3px;">
         <div class="container">
@@ -32,5 +31,23 @@
         </div>
     </div>
 </div>
-
-{{view Ember.TextArea valueBinding="controller.book.chapterContentNew"}}
+<div class="col-lg-8 col-md-9 col-sm-9 col-xs-9">
+    {{view Ember.TextArea valueBinding="controller.book.chapterContentNew"}}
+</div>
+<div class="col-lg-4 col-md-3 col-sm-3 col-xs-3 sidebar">
+    <div class="sidebar-chat">
+        
+    </div>
+    <div class="sidebar-form">
+        <h4>Current Contributors</h4>
+        <hr />
+        <form {{action addCoAuthor on="submit"}}>
+            <div class="input-group">
+                {{input value=controller.newCoAuthor type="text" class='form-control' placeholder="New Co-Author"}}
+                <span class="input-group-btn">
+                    <button id="addChapter" class='btn btn-default' type='submit'>Add</button>
+                </span>
+            <div class="input-group">
+        </form>
+    </div>
+</div>
