@@ -36,7 +36,7 @@ SocketEvents.prototype.addBook = function(data) {
         colors = ['#F2BBA7', '#29698C', '#64A562', '#69BFAF', '#0FA68A', '#BBBBBB', '#F2C1F4'],
         p;
 
-    if (!username) that.emitError(null, { message: 'No username provided' });
+    if (!username) return that.emitError(null, { message: 'No username provided' });
 
     p = path.join('/repos', username, stripSpaces(title));
     firstFile = path.join(p, fileName);
@@ -49,28 +49,28 @@ SocketEvents.prototype.addBook = function(data) {
         }
 
         mkdirp(p, function(err) {
-            if (err) that.emitError(err);
+            if (err) return that.emitError(err);
 
             git.init(p, function (err, repo) {
-                if (err) that.emitError(err);
+                if (err) return that.emitError(err);
 
                 // Create an intro file and make initial commit.
                 fs.writeFile(firstFile, 'Welcome to Tandem. Start writing!', function(err) {
-                    if (err) that.emitError();
+                    if (err) return that.emitError();
 
                     repo.add(firstFile, function(err) {
-                        if (err) that.emitError(err);
+                        if (err) return that.emitError(err);
 
                         repo.commit('Initial Commit', {
                             a: true
                         }, function(err) {
-                            if (err) that.emitError(err);
+                            if (err) return that.emitError(err);
                         });
                     });
                 });
 
                 Author.findOne({username: username}, function (err, author) {
-                    if (err) that.emitError(err);
+                    if (err) return that.emitError(err);
 
                     var book = new Book({
                         title: title,
@@ -85,7 +85,7 @@ SocketEvents.prototype.addBook = function(data) {
                     });
 
                     book.save(function (err, b) {
-                        if (err) that.emitError(err);
+                        if (err) return that.emitError(err);
 
                         Author.update({username: username}, {$push: {books: b}}, function (err, numAffected, rawResponse) {
                             if (err) that.emitError(err);
@@ -112,7 +112,9 @@ SocketEvents.prototype.deleteBook = function(data) {
         });
 
         Book.findById(bookId, function(err, book) {
-            if (err) self.emitError(err);
+            if (err) return self.emitError(err);
+
+            if (book == null) self.socket.emit('bookDeleted', '');
 
             if (book.path && book.path !== '/') {
                 // remove every file in the repo
@@ -122,7 +124,7 @@ SocketEvents.prototype.deleteBook = function(data) {
         });
 
         Book.remove({ _id: bookId }, function (err) {
-            if (err) self.emitError(err);
+            if (err) return self.emitError(err);
 
             self.socket.emit('bookDeleted', { _id: data._id });
         });
@@ -154,7 +156,7 @@ SocketEvents.prototype.getBook = function(data) {
 //         repo.chapters = files;
 
         Book.findOne({ _id: id }, function(err, book) {
-            if (err) self.emitError(err);
+            if (err) return self.emitError(err);
 // console.log('book');
 // console.log(book);
             // book = extend(repo, book);
@@ -170,7 +172,7 @@ SocketEvents.prototype.getAllBooks = function(data) {
     Author.findOne({ username: username })
     .populate('books')
     .exec(function (err, author) {
-        if (err) that.emitError(err);
+        if (err) return that.emitError(err);
 
         var books = author.books;
 
@@ -186,7 +188,7 @@ SocketEvents.prototype.saveBook = function(data) {
     repo = git(socket.book.path);
 
     repo.commit(message, function(err) {
-        if (err) self.emitError(err);
+        if (err) return self.emitError(err);
 
         self.socket.emit('bookSaved', {success: true});
     });
@@ -200,27 +202,27 @@ SocketEvents.prototype.addChapter = function(data) {
         title = data.title,
         fileName = stripSpaces(title) + '.txt';
 
-    if (!username) that.emitError(null, { message: 'No username provided' });
+    if (!username) return that.emitError(null, { message: 'No username provided' });
 
     Book.findOne({_id: bookId}, function (err, book) {
-        if (err) that.emitError(err, { message: 'Book could not be located' });
+        if (err) return that.emitError(err, { message: 'Book could not be located' });
 
         repo = git(book.path);
         filepath = path.join(book.path, fileName);
 
         fs.exists(book.path, function(exists) {
-            if (!exists) that.emitError();
+            if (!exists) return that.emitError();
 
             fs.writeFile(filepath, 'Start writing chapter ' + title + ' now!', function(err) {
                 if (err) that.emitError(err);
 
                 repo.add(fileName, function(err) {
-                    if (err) that.emitError(err);
+                    if (err) return that.emitError(err);
 
                     repo.commit('Initial commit of new chapter: ' + title, {
                         a: false
                     }, function(err) {
-                        if (err) that.emitError(err);
+                        if (err) return that.emitError(err);
 
                         if (book.chapters === undefined) book.chapters = [];
 
@@ -230,7 +232,7 @@ SocketEvents.prototype.addChapter = function(data) {
                         });
 
                         book.save(function (err, book) {
-                            if (err) that.emitError(err);
+                            if (err) return that.emitError(err);
 
                             that.socket.emit('chapterCreated', book);
                         });
@@ -243,14 +245,13 @@ SocketEvents.prototype.addChapter = function(data) {
 
 // idx of chapter array, _id, get
 SocketEvents.prototype.getChapter = function(data) {
-    var username = this.user.username,
-        bookId = new ObjectId(data._id),
+    var bookId = new ObjectId(data._id),
         i = data.idx,
         that = this,
         repo;
 
     Book.findOne({ _id: bookId }, function(err, book) {
-        if (err) that.emitError(err);
+        if (err) return that.emitError(err);
 
         repo = git(book.path);
 
@@ -258,13 +259,17 @@ SocketEvents.prototype.getChapter = function(data) {
 
         // get contents of file.
         fs.readFile(book.path + '/' + book.chapters[i].fileName, 'utf8', function(err, contents) {
-            if (err) that.emitError(err);
+            if (err) return that.emitError(err);
 
             that.socket.emit('viewChapter', { contents: contents });
-
         });
     });
 };
+
+// apply the patch to the file. 
+SocketEvents.prototype.updateChapter = function(data) {
+
+}
 
 var stripSpaces = function(str) {
     return str.replace(/\s/g, '')
