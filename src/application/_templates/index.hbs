@@ -14,7 +14,7 @@
 <div class="bookList">
     <h3>Works in Progress:</h3>
 	{{#each book in controller.books.content}}
-		<div class="book col-lg-2 col-md-3 col-sm-4 col-xs-6" {{bindAttr style="book.background"}}>
+		<div class="book col-lg-2 col-md-3 col-sm-4 col-xs-6" {{bindAttr style="book.color"}}>
 			<p class="title">{{book.displayShortTitle}}</p>
 			<p class="author">{{book.owner}}</p>
 		</div>
