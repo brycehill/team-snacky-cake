@@ -133,7 +133,9 @@ SocketEvents.prototype.deleteBook = function(data) {
         Book.remove({ _id: bookId }, function (err) {
             if (err) return self.emitError(err);
 
-            self.socket.emit('bookDeleted', { _id: data._id });
+            authors.forEach(function(author) {
+                updateOtherUser(author.username, 'bookDeleted', { _id: data._id});
+            })
         });
     });
 };
