@@ -48,7 +48,7 @@
             },
             saveRevision: function() {
                 var data = {
-                    message: 'Commiting ' + this.get('currentChapterName') + ' at ' + new Date(),
+                    message: 'Commiting ' + this.get('currentChapterName') + ' by ' + TandemApp.get('author').get('name') +' at ' + new Date(),
                     bookId: this.get('id'),
                     idx: this.get('currentChapter')
                 };
