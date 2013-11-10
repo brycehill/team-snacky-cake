@@ -19,7 +19,7 @@ SocketEvents.prototype.addBook = function(data) {
     var username = this.user.username,
         title = data.title,
         that = this,
-        colors = ['F2BBA7', '29698C', '64A562', '69BFAF', '0FA68A'],
+        colors = ['#F2BBA7', '#29698C', '#64A562', '#69BFAF', '#0FA68A', '#BBBBBB', '#F2C1F4'],
         p;
 
     if (!username) throw new Error('No username provided');
