@@ -8,6 +8,7 @@ var Book = require('./models/Book'),
     exec = require('child_process').exec,
     mongoose = require('mongoose'),
     ObjectId = mongoose.Types.ObjectId,
+    _ = require('underscore'),
     diff_patch_match = require('./diff_patch_match');
 
 function SocketEvents(socket, allClients) {
@@ -244,13 +245,33 @@ SocketEvents.prototype.addChapter = function(data) {
     var that = this,
         bookId = new ObjectId(data._id),
         title = data.title,
-        fileName = stripSpaces(title) + '.txt',
-        idx, ws;
+        fileName, idx, ws;
 
     Book.findOne({_id: bookId}, function (err, book) {
         if (err) return that.emitError(err, { message: 'Book could not be located' });
 
         repo = git(book.path);
+
+         book.chapters.forEach(function(chapter, i) {
+            var count = 1;
+            // book.chapters[i] is the object
+            if (chapter.title === title) {
+                //rename title
+                while(_.where(book.chapters, {title: title}).length > 0 && count <= 100) {
+                    // hacky, but...
+                    if (count > 1) {
+                        title = title.substr(0, title.length - 1) + count;
+                    } else {
+                        title = title + '.' + count;
+                    }
+
+                    count++;
+                }
+            }
+        });
+
+        fileName = stripSpaces(title) + '.txt';
+
         filepath = path.join(book.path, fileName);
 
         fs.exists(book.path, function(exists) {
@@ -273,6 +294,7 @@ SocketEvents.prototype.addChapter = function(data) {
 
                     book.chapters.push({
                         title: title,
+                        fileName: fileName,
                         number: idx
                     });
 
