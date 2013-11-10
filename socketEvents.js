@@ -81,14 +81,14 @@ SocketEvents.prototype.getBook = function(data) {
     var self = this,
         username = this.user.username,
         title = stripSpaces(data.title),
-        repo, path, chapters;
+        repo, p, chapters;
 
     if (!username) throw new Error('No username provided');
 
-    path = '/repos/' + username + '/' + title;
+    p = path.join('/repos', username, title);
     // What information about the repo do we want?
     // Commits?
-    repo = git(path);
+    repo = git(p);
     repo.tree().trees(function(err, sub) {
         if (err) throw err;
         // map over this to get stuff?
@@ -151,7 +151,7 @@ SocketEvents.prototype.addChapter = function(data) {
         if (err) throw new Error('Book could not be located');
 
         repo = git(book.path);
-        filepath = book.path + '/' +fileName;
+        filepath = path.join(book.path, fileName);
 
         fs.exists(book.path, function(exists) {
             if (!exists) throw new Error('Book path does not exits');
@@ -189,8 +189,8 @@ SocketEvents.prototype.addChapter = function(data) {
 };
 
 var stripSpaces = function(str) {
-    return str.replace( /\s/g, '')
-              .replace( /\W/g, '');
+    return str.replace(/\s/g, '')
+              .replace(/\W/g, '');
 };
 
 module.exports = SocketEvents;
