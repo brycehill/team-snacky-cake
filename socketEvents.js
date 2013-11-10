@@ -32,6 +32,20 @@ SocketEvents.prototype.emitError = function(err, data) {
     }
 };
 
+SocketEvents.prototype.receiveBookChatMessage = function (data) {
+    var that = this;
+
+    console.log(data);
+
+    Author.find().where('books').in([data.bookId]).exec(function(err, authors) {
+        if (err) that.emitError(err);
+
+        that.socket.broadcast.to(data.bookId).emit('function', {message:data.message});
+
+    });
+
+}
+
 SocketEvents.prototype.addBook = function(data) {
     var username = this.user.username,
         title = data.title,

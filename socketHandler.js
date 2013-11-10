@@ -27,10 +27,13 @@ module.exports.init = function(socket, allClients) {
     socket.on('updateChapter', s.updateChapter.bind(s));
     // Save a chapter - Commit!
     socket.on('saveChapter', s.saveChapter.bind(s));
-    socket.on('joinRoom', s.joinRoom.bind(s));
 
     socket.on('addCoAuthor', s.addCoAuthor.bind(s));
 
     socket.on('getCommits', s.getCommits.bind(s));
     socket.on('gimmeYerAuthors', s.gimmeYerAuthors.bind(s));
+
+    // chatz yo!
+    socket.on('joinBookRoom', s.joinRoom.bind(s));
+    socket.on('bookChatMessage', s.receiveBookChatMessage.bind(s));
 };
