@@ -76,10 +76,9 @@ TandemApplication.reopen({
                 var diff = data.fullDiff,
                     $diff = $('#diff');
 
-                $diff.empty()
+                $diff.empty();
                 tmp = diff.split('<br>');
-                // console.log(typeof tmp);
-                // console.log(tmp);
+
                 newDiff = tmp.map(function(line, i) {
                     if (line.charAt() == '+') {
                         return '<span class=\'addition\'>'+line+'</span>';
@@ -90,9 +89,7 @@ TandemApplication.reopen({
                     }
                 });
 
-                console.log(newDiff);
                 $diff.append(newDiff).scrollTop($diff[0].scrollHeight);
-
             });
         },
         addBook: function(book) {
