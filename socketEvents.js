@@ -195,29 +195,41 @@ SocketEvents.prototype.getAllBooks = function() {
     });
 };
 
-SocketEvents.prototype.saveBook = function(data) {
+SocketEvents.prototype.saveChapter = function(data) {
     var self = this,
         message = data.message,
+        bookId = new ObjectId(data.bookId),
+        i = data.idx,
         repo;
 
-    repo = git(socket.book.path);
-
-    repo.commit(message, function(err) {
+    Book.findOne({ _id: bookId }, function(err, book) {
         if (err) return self.emitError(err);
 
-        self.socket.emit('bookSaved', {success: true});
+        repo = git(book.path);
+
+        file = book.path + '/' + book.chapters[i];
+        // Add only this chapter file. 
+        repo.add(file, function(err) {
+            if (err) return self.emitError(err);
+
+            repo.commit(message, {
+                file: file
+            }, function(err) {
+                if (err) return self.emitError(err);
+
+                // What to send back here?
+                self.socket.emit('chapterCommit', {success: true});
+            });
+        });
     });
 };
 
 SocketEvents.prototype.addChapter = function(data) {
     var that = this,
-        username = this.user.username,
-        bookId = new ObjectId(data.bookId),
-        number = data.number,
+        bookId = new ObjectId(data._id),
         title = data.title,
-        fileName = stripSpaces(title) + '.txt';
-
-    if (!username) return that.emitError(null, { message: 'No username provided' });
+        fileName = stripSpaces(title) + '.txt',
+        idx, ws;
 
     Book.findOne({_id: bookId}, function (err, book) {
         if (err) return that.emitError(err, { message: 'Book could not be located' });
@@ -228,28 +240,33 @@ SocketEvents.prototype.addChapter = function(data) {
         fs.exists(book.path, function(exists) {
             if (!exists) return that.emitError();
 
-            fs.writeFile(filepath, 'Start writing chapter ' + title + ' now!', function(err) {
-                if (err) that.emitError(err);
+            ws = fs.createWriteStream(book.path + '/' + fileName);
+            ws.write('Start writing chapter \'' + title + '\' now!');
 
-                repo.add(fileName, function(err) {
+            repo.add(fileName, function(err) {
+                if (err) return that.emitError(err);
+
+                repo.commit('Initial commit of new chapter: ' + title, {
+                    a: false
+                }, function(err) {
                     if (err) return that.emitError(err);
 
-                    repo.commit('Initial commit of new chapter: ' + title, {
-                        a: false
-                    }, function(err) {
+                    if (book.chapters === undefined) book.chapters = [];
+
+                    idx = book.chapters.length + 1;
+
+                    book.chapters.push({
+                        title: title,
+                        number: idx
+                    });
+
+                    book.save(function (err, book) {
                         if (err) return that.emitError(err);
 
-                        if (book.chapters === undefined) book.chapters = [];
-
-                        book.chapters.push({
+                        that.socket.emit('chapterCreated', {
+                            _id: book._id,
                             title: title,
-                            number: number
-                        });
-
-                        book.save(function (err, book) {
-                            if (err) return that.emitError(err);
-
-                            that.socket.emit('chapterCreated', book);
+                            idx: idx
                         });
                     });
                 });
@@ -333,6 +350,11 @@ SocketEvents.prototype.addCoAuthor = function(data) {
             author.save();
         });
     }
+};
+
+
+SocketEvents.prototype.getCommits = function(data) {
+
 };
 
 var stripSpaces = function(str) {

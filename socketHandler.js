@@ -15,8 +15,6 @@ module.exports.init = function(socket) {
     // Gets a book (repo) and sends it back.
     socket.on('getBook', s.getBook.bind(s));
     socket.on('getAllBooks', s.getAllBooks.bind(s));
-    // Save a book - Commit!
-    socket.on('saveBook', s.saveBook.bind(s));
     // Save the file the user is working on. 
     socket.on('autoSave', function(data) {
         var blob = data.blob;
@@ -26,5 +24,8 @@ module.exports.init = function(socket) {
     socket.on('addChapter', s.addChapter.bind(s));
     socket.on('getChapter', s.getChapter.bind(s));
     socket.on('updateChapter', s.updateChapter.bind(s));
+    // Save a chapter - Commit!
+    socket.on('saveChapter', s.saveChapter.bind(s));
+
     socket.on('addCoAuthor', s.addCoAuthor.bind(s));
 };

@@ -10,6 +10,7 @@ var connect = require('connect'),
     passport = require('passport'),
     GitHubStrategy = require('passport-github').Strategy,
     parseCookie = require('connect').utils.parseCookie,
+    request = require('request'),
     MemoryStore = express.session.MemoryStore,
     sessionStore = new MemoryStore();
 
