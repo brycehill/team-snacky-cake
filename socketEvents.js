@@ -232,7 +232,10 @@ SocketEvents.prototype.getCommits = function(data) {
             if (err) return self.emitError(err);
 
             that.socket.emit('bookCommits', {
-                data: commits
+                data: {
+                    commits: commits,
+                    book: book
+                }
             });
 
         });
