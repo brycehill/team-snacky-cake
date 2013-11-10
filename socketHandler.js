@@ -32,4 +32,5 @@ module.exports.init = function(socket, allClients) {
     socket.on('addCoAuthor', s.addCoAuthor.bind(s));
 
     socket.on('getCommits', s.getCommits.bind(s));
+    socket.on('gimmeYerAuthors', s.gimmeYerAuthors.bind(s));
 };

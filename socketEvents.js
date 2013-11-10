@@ -421,6 +421,15 @@ SocketEvents.prototype.addCoAuthor = function(data) {
     }
 };
 
+SocketEvents.prototype.gimmeYerAuthors = function(data) {
+    var bookId = data.id;
+    var self = this;
+    Author.find({}, 'username').where('books').in([bookId]).exec(function(err, authors) {
+        if (err) self.emitError(err);
+        self.socket.emit('allAuthors', authors);
+    });
+}
+
 var stripSpaces = function(str) {
     return str.replace(/\s/g, '')
               .replace(/\W/g, '');
