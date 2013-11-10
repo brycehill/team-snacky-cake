@@ -100,8 +100,12 @@ SocketEvents.prototype.addBook = function(data) {
 };
 
 SocketEvents.prototype.deleteBook = function(data) {
-    var bookId = new ObjectId(data._id),
-        self = this;
+    var self = this,
+        bookId;
+
+    if (!data._id) return self.socket.emit('bookDeleted', '');
+
+    bookId = new ObjectId(data._id);
 
     Author.find().where('books').in([bookId]).exec(function(err, authors) {
         if (err) self.emitError(err);
@@ -114,7 +118,7 @@ SocketEvents.prototype.deleteBook = function(data) {
         Book.findById(bookId, function(err, book) {
             if (err) return self.emitError(err);
 
-            if (book == null) self.socket.emit('bookDeleted', '');
+            if (book == null) return self.socket.emit('bookDeleted', '');
 
             if (book.path && book.path !== '/') {
                 // remove every file in the repo
@@ -255,8 +259,6 @@ SocketEvents.prototype.getChapter = function(data) {
 
         repo = git(book.path);
 
-        console.log(book.chapters[i]);
-
         // get contents of file.
         fs.readFile(book.path + '/' + book.chapters[i].fileName, 'utf8', function(err, contents) {
             if (err) return that.emitError(err);
@@ -268,8 +270,27 @@ SocketEvents.prototype.getChapter = function(data) {
 
 // apply the patch to the file. 
 SocketEvents.prototype.updateChapter = function(data) {
+    var bookId = new ObjectId(data._id),
+        i = data.idx,
+        diff = data.diff,
+        that = this,
+        repo;
 
-}
+    // diff to object
+    Book.findOne({ _id: bookId }, function(err, book) {
+        if (err) return that.emitError(err);
+
+        repo = git(book.path);
+
+        // get contents of file.
+        fs.readFile(book.path + '/' + book.chapters[i].fileName, 'utf8', function(err, contents) {
+            if (err) return that.emitError(err);
+
+            that.socket.emit('viewChapter', { contents: contents });
+        });
+    });
+
+};
 
 var stripSpaces = function(str) {
     return str.replace(/\s/g, '')
