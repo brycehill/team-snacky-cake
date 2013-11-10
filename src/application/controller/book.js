@@ -24,7 +24,11 @@ TandemApplication.reopen({
             TandemApp.get('socket').on('chapterCreated', function(chapter) {
                 that.get('content').forEach(function (book) {
                     if (book.get('id') === chapter._id) {
-                        var newChapter = Ember.Object.create({title: chapter.title, number: chapter.idx});
+                        var newChapter = TandemApp.ChapterModel.create({
+                            book: book,
+                            title: chapter.title,
+                            number: chapter.idx
+                        });
                         book.get('chapterObjects').pushObject(newChapter);
                     }
                 });
@@ -44,7 +48,6 @@ TandemApplication.reopen({
                             idx: that.get('book.currentChapter'),
                             diff: ptxt
                         });
-                        console.log(ptxt);
                         that.set('book.chapterContentOld', that.get('book.chapterContentNew'));
                     }
                     setTimeout(updater, 500);

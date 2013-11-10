@@ -19,9 +19,17 @@
 
 
     <div class="scrollingchapters">
+        <table cellspacing="0" cellpadding="0" border="0">
         {{#each chapter in controller.book.realChapters}}
-            {{chapter.title}}<br>
+            <tr>
+                <td><div style="width:245px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">
+                    <a href="javascript:;" {{action editChapter target="chapter"}} {{bindAttr title='chapter.title'}}>
+                        {{chapter.title}}
+                    </a>
+                </div></td>
+            </tr>
         {{/each}}
+        </table>
     </div>
     <div class="holder">
         <div class="tabbie">

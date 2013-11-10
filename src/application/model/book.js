@@ -15,7 +15,8 @@
                     content: []
                 }));
                 this.get('chapters').forEach(function (chapter) {
-                    that.get('chapterObjects.content').pushObject(Ember.Object.create(chapter));
+                    chapter.book = that;
+                    that.get('chapterObjects.content').pushObject(TandemApp.ChapterModel.create(chapter));
                 });
                 cache.push(this);
                 return this._super();
@@ -43,7 +44,15 @@
                     TandemApp.get('socket').emit('deleteBook', data);
                 }
             },
-            startEditingChapter: function (idx) {
+            startEditingChapterByNumber: function (number) {
+                var that = this;
+                this.get('chapterObjects').forEach(function (chapter, idx) {
+                    if (chapter.get('number') == number) {
+                        that.startEditingChapterByIndex(idx);
+                    }
+                });
+            },
+            startEditingChapterByIndex: function (idx) {
                 TandemApp.get('socket').emit('getChapter', {
                     _id: this.get('id'),
                     idx: idx
