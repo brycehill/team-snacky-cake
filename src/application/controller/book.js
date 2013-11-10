@@ -59,6 +59,13 @@ TandemApplication.reopen({
 
                 setTimeout(updater, 500);
             });
+            TandemApp.get('socket').on('allAuthors', function(authors) {
+            	var a = [];
+            	authors.forEach(function(author) {
+            		a.push(author.username);
+            	});
+            	that.set('book.allAuthors', a);
+            });
         },
         addBook: function(book) {
             book.id = book._id;
