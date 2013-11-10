@@ -1,13 +1,15 @@
 
 
-<div class="col-md-6 col-sm-6 col-xs-6 add-book-form">
-    <div class="input-group">
-        {{input value=bookName type="text" class='form-control' placeholder="New Book Title"}}
-        <span class="input-group-btn">
-            <button id="addBook" class='btn btn-default' type='button' {{action 'createBook'}}>Create</button>
-        </span>
-    </div>
-</div>
+<form {{action createBook on="submit"}}>
+	<div class="col-md-6 col-sm-6 col-xs-6 add-book-form">
+	    <div class="input-group">
+		        {{input value=bookName type="text" class='form-control' placeholder="New Book Title"}}
+		        <span class="input-group-btn">
+		            <button id="addBook" class='btn btn-default' type='submit'>Create</button>
+		        </span>
+	    </div>
+	</div>
+</form>
 
 <div class="bookList">
     <h3>Works in Progress:</h3>

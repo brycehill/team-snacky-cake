@@ -8,7 +8,10 @@ TandemApplication.reopen({
    				books.forEach(function(book) {
    					that.get('content').pushObject(TandemApp.BookModel.create(book));
    				})
-   			});
+   			}),
+   			TandemApp.get('socket').on('bookAdded', function(book) {
+            	that.get('content').pushObject(TandemApp.BookModel.create(book));
+            })
    		}
    	})
 });
