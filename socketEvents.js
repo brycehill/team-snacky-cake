@@ -67,7 +67,7 @@ SocketEvents.prototype.addBook = function(data) {
                         Author.update({username: username}, {$push: {books: b}}, function (err, numAffected, rawResponse) {
                             if (err) throw err;
 
-                            that.socket.emit('monkey', {message: 'success'});
+                            that.socket.emit('bookAdded', b);
                         });
                     });
                 });
