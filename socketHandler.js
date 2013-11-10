@@ -6,8 +6,6 @@ module.exports.init = function(socket, allClients) {
 
     var s = new SocketEvents(socket, allClients);
     // @TODO figure out how to handle multiple users on a socket.
-    var s = new SocketEvents(socket);
-    // @TODO figure out how to handle multiple users on a socket.
 
     socket.emit('setupUser', socket.user);
     // send back book list?
