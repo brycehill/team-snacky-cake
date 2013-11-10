@@ -1,13 +1,14 @@
 TandemApplication.reopen({
     BookController: Ember.ArrayController.extend({
         content: [],
+        intervalID: false,
         init: function() {
             var that = this;
             TandemApp.get('socket').emit('getAllBooks');
             TandemApp.get('socket').on('foundBooks', function(books) {
                 books.forEach(function(book) {
                     that.addBook(book);
-                })
+                });
             });
             TandemApp.get('socket').on('bookAdded', function(book) {
                 that.addBook(book);
@@ -21,8 +22,6 @@ TandemApplication.reopen({
                 }
             });
             TandemApp.get('socket').on('viewChapter', function(chapter) {
-                console.log(chapter.contents);
-                console.log(that.get('book'));
                 that.set('book.chapterContentOld', chapter.contents);
                 that.set('book.chapterContentNew', chapter.contents);
 
@@ -50,6 +49,15 @@ TandemApplication.reopen({
                book.id = book._id;
             delete book._id;
             this.get('content').pushObject(TandemApp.BookModel.create(book));
+        },
+        actions: {
+            createChapter: function () {
+                TandemApp.get('socket').emit('addChapter', {
+                    _id: this.get('book.id'),
+                    title: this.get('newChapterTitle')
+                });
+                this.set('newChapterTitle', '');
+            }
         }
     })
 });
