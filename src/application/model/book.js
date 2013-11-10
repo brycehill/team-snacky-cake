@@ -38,7 +38,7 @@
             deleteBook: function() {
                 var response = confirm('Are you sure you want to delete ' + this.title + '?');
                 //Bryce wants it to be _id because he is lazy and that is how it is written on his end
-                var data = {}
+                var data = {};
                 data._id = this.get('id');
                 if (response) {
                     TandemApp.get('socket').emit('deleteBook', data);
@@ -51,6 +51,7 @@
                         that.startEditingChapterByIndex(idx);
                     }
                 });
+                this.set('chaptersOpen', false);
             },
             startEditingChapterByIndex: function (idx) {
                 TandemApp.get('socket').emit('getChapter', {
@@ -64,7 +65,13 @@
             }.property('owner'),
             realChapters: function () {
                 return this.get('chapterObjects.arrangedContent');
-            }.property('chapterObjects.@each.number')
+            }.property('chapterObjects.@each.number'),
+            currentChapterName: function () {
+                return this.get('chapterObjects.content')[this.get('currentChapter')].get('title');
+            }.property('currentChapter'),
+            revisionList: function () {
+                TandemApp.get('socket').emit('getCommits', {bookId: this.get('id')});
+            }
         });
 
 
