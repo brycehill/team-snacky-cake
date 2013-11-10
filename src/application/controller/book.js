@@ -86,6 +86,8 @@ TandemApplication.reopen({
                         return '<span class=\'addition\'>'+line+'</span>';
                     } else if (line.charAt() == '-') {
                         return '<span class=\'subtraction\'>'+line+'</span>';
+                    } else if (line == '\\ No newline at end of file') {
+                    	return;
                     } else {
                         return line;
                     }
