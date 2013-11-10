@@ -13,6 +13,8 @@ TandemApplication.reopen({
             if (!hasBook) {
                 controller.get('content').pushObject(model);
             }
+
+            TandemApp.get('socket').emit('gimmeYerAuthors', {id: model.get('id')});
         }
     })
 });

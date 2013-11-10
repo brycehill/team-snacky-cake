@@ -64,6 +64,13 @@
     </div>
     <div class="sidebar-form">
         <h4>Current Co-Authors</h4>
+        <div class="allAuthors">
+            <ul>
+            {{#each author in controller.book.allAuthors}}
+                <li>{{author}}</li>
+            {{/each}}
+            </ul>
+        </div>
         <form {{action addCoAuthor on="submit"}}>
             <div class="input-group">
                 {{input value=controller.newCoAuthor type="text" class='form-control' placeholder="New Co-Author"}}

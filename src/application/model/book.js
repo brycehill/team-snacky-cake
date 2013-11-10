@@ -90,7 +90,10 @@
             }.property('currentChapter'),
             revisionList: function () {
                 TandemApp.get('socket').emit('getCommits', {bookId: this.get('id')});
-            }
+            },
+            getAllAuthors: function() {
+            	return this.get('allAuthors');
+            }.property('allAuthors')
         });
 
 
