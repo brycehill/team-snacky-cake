@@ -80,7 +80,6 @@ header {
 
 .bookList {
 
-    list-style: none;
     padding: 0;
 
     li {
@@ -89,11 +88,11 @@ header {
     }
 
     div.book {
+        margin: 5px;
         padding: 20px;
         width: 200px;
         height: 270px;
         background-color: #eee;
-        display: inline-block;
         border-right: 3px solid #555;
         border-top: 1px solid #888;
         border-left: 1px solid #888;
@@ -104,8 +103,8 @@ header {
             text-align: center;
         }
         p.author {
-            position: relative;
-            top: 170px;
+            position: absolute;
+            bottom: 10px;
         }
     }
 }

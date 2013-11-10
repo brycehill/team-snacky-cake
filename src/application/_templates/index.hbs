@@ -6,14 +6,12 @@ Index Page
 
 <div class="bookContainer">
 	<h2>Books</h2>
-	<ul class="bookList">
+	<div class="bookList">
 		{{#each book in controller.books.content}}
-		<li>
-			<div class="book">
+			<div class="book col-lg-2 col-md-3 col-sm-4 col-xs-6">
 				<p class="title">{{book.title}}</p>
 				<p class="author">{{book.owner}}</p>
 			</div>
-		</li>
 		{{/each}}
-	</ul>
+	</div>
 </div>
