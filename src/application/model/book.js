@@ -6,7 +6,17 @@
         Model = Ember.Object.extend({
             chapterContentOld: '',
             chapterContentNew: 'Loading...',
+            chapterObjects: null,
             init: function () {
+                var that = this;
+                this.set('chapterObjects', Ember.ArrayController.create({
+                    sortProperties: ['number'],
+                    sortAscending: true,
+                    content: []
+                }));
+                this.get('chapters').forEach(function (chapter) {
+                    that.get('chapterObjects.content').pushObject(Ember.Object.create(chapter));
+                });
                 cache.push(this);
                 return this._super();
             },
@@ -25,13 +35,13 @@
                 this.set('chaptersOpen', !this.get('chaptersOpen'));
             },
             deleteBook: function() {
-            	var response = confirm('Are you sure you want to delete ' + this.title + '?');
-            	//Bryce wants it to be _id because he is lazy and that is how it is written on his end
-            	var data = {}
-            	data._id = this.get('id');
-            	if (response) {
-            		TandemApp.get('socket').emit('deleteBook', data);
-            	}
+                var response = confirm('Are you sure you want to delete ' + this.title + '?');
+                //Bryce wants it to be _id because he is lazy and that is how it is written on his end
+                var data = {}
+                data._id = this.get('id');
+                if (response) {
+                    TandemApp.get('socket').emit('deleteBook', data);
+                }
             },
             startEditingChapter: function (idx) {
                 TandemApp.get('socket').emit('getChapter', {
@@ -41,8 +51,11 @@
                 this.set('currentChapter', idx);
             },
             isOwner: function(book) {
-	            return this.get('owner') === TandemApp.author.get('login');
-	        }.property('owner')
+                return this.get('owner') === TandemApp.author.get('login');
+            }.property('owner'),
+            realChapters: function () {
+                return this.get('chapterObjects.arrangedContent');
+            }.property('chapterObjects.@each.number')
         });
 
 

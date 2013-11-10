@@ -21,6 +21,14 @@ TandemApplication.reopen({
                     }
                 }
             });
+            TandemApp.get('socket').on('chapterCreated', function(chapter) {
+                that.get('content').forEach(function (book) {
+                    if (book.get('id') === chapter._id) {
+                        var newChapter = Ember.Object.create({title: chapter.title, number: chapter.idx});
+                        book.get('chapterObjects').pushObject(newChapter);
+                    }
+                });
+            });
             TandemApp.get('socket').on('viewChapter', function(chapter) {
                 that.set('book.chapterContentOld', chapter.contents);
                 that.set('book.chapterContentNew', chapter.contents);
@@ -46,7 +54,7 @@ TandemApplication.reopen({
             });
         },
         addBook: function(book) {
-               book.id = book._id;
+            book.id = book._id;
             delete book._id;
             this.get('content').pushObject(TandemApp.BookModel.create(book));
         },
