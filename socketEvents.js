@@ -71,12 +71,6 @@ SocketEvents.prototype.addBook = function(data) {
                         });
                     });
                 });
-<<<<<<< HEAD
-                // 
-                // save to github repo
-                // console.log(that.user);
-=======
->>>>>>> emitting all commits for a book
 
                 Author.findOne({username: username}, function (err, author) {
                     if (err) return that.emitError(err);
