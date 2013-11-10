@@ -7,6 +7,7 @@ var Book = new Schema({
     path: String,
     chapters: [{
         title: String,
+        fileName: String,
         number: Number
     }],
     color: String

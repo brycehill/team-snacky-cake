@@ -5,6 +5,7 @@ var Book = require('./models/Book'),
     fs = require('fs'),
     mkdirp = require('mkdirp'),
     path = require('path'),
+    exec = require('child_process').exec,
     mongoose = require('mongoose'),
     ObjectId = mongoose.Types.ObjectId;
 
@@ -19,13 +20,14 @@ SocketEvents.prototype.addBook = function(data) {
     var username = this.user.username,
         title = data.title,
         that = this,
+        fileName = 'chapter1.txt',
         colors = ['#F2BBA7', '#29698C', '#64A562', '#69BFAF', '#0FA68A', '#BBBBBB', '#F2C1F4'],
         p;
 
     if (!username) throw new Error('No username provided');
 
     p = path.join('/repos', username, stripSpaces(title));
-    firstFile = path.join(p, 'intro.txt');
+    firstFile = path.join(p, fileName);
 
     fs.exists(p, function(exists) {
         if (exists) throw new Error('Repo Exists for user ' + username);
@@ -37,7 +39,7 @@ SocketEvents.prototype.addBook = function(data) {
                 if (err) throw err;
 
                 // Create an intro file and make initial commit.
-                fs.writeFile(firstFile, 'This is an intro file. Start writing!', function(err) {
+                fs.writeFile(firstFile, 'Welcome to Tandem. Start writing!', function(err) {
                     if (err) throw err;
 
                     repo.add(firstFile, function(err) {
@@ -54,14 +56,17 @@ SocketEvents.prototype.addBook = function(data) {
                 Author.findOne({username: username}, function (err, author) {
                     if (err) throw err;
 
-                    var book = new Book(
-                        {
-                            title: title,
-                            owner: author.username,
-                            path: p,
-                            color: colors[Math.floor(Math.random() * colors.length)]
-                        }
-                    );
+                    var book = new Book({
+                        title: title,
+                        owner: author.username,
+                        path: p,
+                        chapters: [{
+                            title: 'Chapter 1',
+                            fileName: fileName,
+                            number: 1
+                        }],
+                        color: colors[Math.floor(Math.random() * colors.length)]
+                    });
 
                     book.save(function (err, b) {
                         if (err) throw err;
@@ -74,6 +79,36 @@ SocketEvents.prototype.addBook = function(data) {
                     });
                 });
             });
+        });
+    });
+};
+
+SocketEvents.prototype.deleteBook = function(data) {
+    var bookId = new ObjectId(data._id),
+        self = this;
+
+    Author.find().where('books').in([bookId]).exec(function(err, authors) {
+        if (err) console.error(err);
+
+        authors.forEach(function(author) {
+            author.books.splice(author.books.indexOf(bookId),1);
+            author.save();
+        });
+
+        Book.findById(bookId, function(err, book) {
+            if (err) console.log(err);
+
+            if (book.path && book.path !== '/') {
+                // remove every file in the repo
+                var bash = 'rm -rf ' + book.path;
+                exec(bash);
+            }
+        });
+
+        Book.remove({ _id: bookId }, function (err) {
+            if (err) console.log(err);
+
+            self.socket.emit('bookDeleted', { message: true });
         });
     });
 };

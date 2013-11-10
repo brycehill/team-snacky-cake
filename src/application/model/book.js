@@ -18,7 +18,10 @@
             background: function() {
                 var color = this.get('color') || '#69BFAF';
                 return 'background-color:' + color;
-            }.property('background')
+            }.property('background'),
+            toggleChapter: function () {
+                this.set('chaptersOpen', !this.get('chaptersOpen'));
+            }
         });
 
 
@@ -30,7 +33,6 @@
         find: function (id) {
             if (!listenerAdded) {
                 TandemApp.get('socket').on('viewBook', function (bookObj) {
-                    console.log(bookObj);
                     bookObj.id = bookObj._id;
                     delete bookObj._id;
                     var book = TandemApp.BookModel.create(bookObj);
@@ -43,13 +45,13 @@
                 });
                 listenerAdded = true;
             }
-            console.log(id);
+
             var retval;
             cache.forEach(function(bookObj) {
                 if (bookObj.get('id') === id)
                     retval = bookObj;
             });
-            console.log(retval);
+
             if (!retval) {
                 var promise = $.Deferred();
                 promise.id = id;

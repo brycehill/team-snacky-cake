@@ -11,6 +11,7 @@ module.exports.init = function(socket) {
 
     // Add a book (repo)
     socket.on('addBook', s.addBook.bind(s));
+    socket.on('deleteBook', s.deleteBook.bind(s));
     // Gets a book (repo) and sends it back.
     socket.on('getBook', s.getBook.bind(s));
     socket.on('getAllBooks', s.getAllBooks.bind(s));
