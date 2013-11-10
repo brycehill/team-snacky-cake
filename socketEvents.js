@@ -78,6 +78,10 @@ SocketEvents.prototype.addBook = function(data) {
     });
 };
 
+SocketEvents.prototype.deleteBook = function(data) {
+
+}
+
 SocketEvents.prototype.getBook = function(data) {
     var self = this,
         username = this.user.username,
